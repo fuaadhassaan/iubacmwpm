@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IUB ACM SC WPM Contest - Summer 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090f;
+  --surface: #0d111d;
+  --surface2: #131827;
+  --border: rgba(99,179,237,0.12);
+  --border-bright: rgba(99,179,237,0.35);
+  --cyan: #63b3ed;
+  --cyan-glow: rgba(99,179,237,0.2);
+  --gold: #f6c90e;
+  --silver: #b0bec5;
+  --bronze: #cd8c3a;
+  --text: #e8ecf4;
+  --text-dim: rgba(232,236,244,0.45);
+  --danger: #fc5c7d;
+  --success: #43e97b;
+  --radius: 12px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior:smooth; }
+
+body {
+  font-family: 'Syne', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── grid bg ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(99,179,237,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,179,237,.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  z-index: 0; pointer-events: none;
+}
+
+/* ── glow orb ── */
+body::after {
+  content: '';
+  position: fixed;
+  top: -200px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 500px;
+  background: radial-gradient(ellipse, rgba(99,179,237,.06) 0%, transparent 70%);
+  z-index: 0; pointer-events: none;
+}
+
+.screen { display:none; min-height:100vh; position:relative; z-index:1; flex-direction:column; }
+.screen.active { display:flex; }
+
+/* ══════════════════════════════ NAV ══════════════════════════════ */
+.nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 36px;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  background: rgba(7,9,15,.5);
+  position: sticky; top:0; z-index:10;
+}
+.logo {
+  font-family: 'Orbitron', sans-serif; font-size:1rem; font-weight:900;
+  letter-spacing:3px; color:var(--cyan);
+}
+.logo em { color:var(--text); font-style:normal; }
+.nav-right { display:flex; gap:10px; }
+
+.btn { cursor:pointer; border:none; font-family:'Syne', sans-serif; transition: all .2s; }
+.btn-ghost {
+  background: none; border: 1px solid var(--border); color: var(--text-dim);
+  padding: 8px 18px; border-radius:8px; font-size:.8rem; letter-spacing:.5px;
+}
+.btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+
+.btn-primary {
+  background: var(--cyan); color: #07090f; padding:14px 40px;
+  border-radius: 9px; font-family:'Orbitron',sans-serif; font-size:.8rem;
+  font-weight:700; letter-spacing:2px; text-transform:uppercase;
+}
+.btn-primary:hover { background:#fff; box-shadow:0 8px 32px rgba(99,179,237,.35); transform:translateY(-1px); }
+.btn-primary:active { transform:translateY(0); }
+
+.btn-outline {
+  background: none; border: 1px solid var(--border-bright); color: var(--text);
+  padding:13px 32px; border-radius:9px; font-size:.9rem;
+}
+.btn-outline:hover { border-color:var(--cyan); color:var(--cyan); }
+
+/* ══════════════════════════════ HOME ══════════════════════════════ */
+#home { align-items: center; justify-content: center; padding: 20px; }
+
+.hero-wrap {
+  text-align: center; max-width: 680px; width:100%;
+  animation: fadeUp .7s ease both;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+
+.pill {
+  display:inline-flex; align-items:center; gap:8px;
+  background: var(--cyan-glow); border: 1px solid var(--border-bright);
+  color: var(--cyan); padding:6px 18px; border-radius:100px;
+  font-size:.72rem; letter-spacing:2px; text-transform:uppercase;
+  margin-bottom:28px;
+}
+.pill::before { content:''; width:6px; height:6px; background:var(--cyan); border-radius:50%; animation:blink 1.4s ease infinite; }
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.2; } }
+
+h1 {
+  font-family: 'Orbitron', sans-serif; font-size: clamp(2.4rem,5.5vw,4rem);
+  font-weight:900; line-height:1.08; margin-bottom:20px;
+}
+h1 .hi { color:var(--cyan); }
+
+.hero-p { color:var(--text-dim); font-size:1.05rem; line-height:1.75; margin-bottom:44px; }
+
+.stats-strip {
+  display:flex; justify-content:center; align-items:center;
+  gap:0; margin-bottom:44px;
+  background: var(--surface); border: 1px solid var(--border); border-radius:14px;
+  overflow:hidden;
+}
+.stat-cell {
+  flex:1; padding:20px 24px; text-align:center;
+  border-right: 1px solid var(--border);
+}
+.stat-cell:last-child { border-right:none; }
+.stat-n {
+  font-family:'Orbitron',sans-serif; font-size:1.7rem; font-weight:700; color:var(--cyan);
+}
+.stat-l { font-size:.7rem; color:var(--text-dim); letter-spacing:1.5px; text-transform:uppercase; margin-top:4px; }
+
+.cta-row { display:flex; gap:14px; justify-content:center; align-items:center; flex-wrap:wrap; }
+
+/* ══════════════════════════════ REGISTER ══════════════════════════════ */
+#register { align-items:center; justify-content:center; padding:20px; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 18px; padding:44px; width:100%; max-width:480px;
+  animation: fadeUp .5s ease both;
+}
+.card-head { margin-bottom:32px; }
+.card-title { font-family:'Orbitron',sans-serif; font-size:1.3rem; margin-bottom:6px; }
+.card-sub { color:var(--text-dim); font-size:.9rem; line-height:1.6; }
+
+.field { margin-bottom:18px; }
+.field-label {
+  display:block; font-size:.72rem; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--text-dim); margin-bottom:8px; font-weight:600;
+}
+.field-input {
+  width:100%; background:var(--surface2); border:1px solid var(--border);
+  border-radius:9px; padding:13px 15px; color:var(--text);
+  font-family:'Syne',sans-serif; font-size:.95rem; outline:none; transition: all .2s;
+}
+.field-input:focus { border-color:var(--cyan); box-shadow:0 0 0 3px rgba(99,179,237,.1); }
+.field-input::placeholder { color:var(--text-dim); }
+.field-err { color:var(--danger); font-size:.8rem; margin-top:5px; display:none; }
+
+/* ══════════════════════════════ TEST ══════════════════════════════ */
+#test { padding:0; }
+
+.test-top {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 32px; border-bottom:1px solid var(--border);
+  background: rgba(7,9,15,.8); backdrop-filter:blur(12px);
+  position:sticky; top:0; z-index:5;
+}
+.timer {
+  font-family:'Orbitron',sans-serif; font-size:2.2rem; font-weight:700;
+  color:var(--cyan); min-width:90px; text-align:center;
+  transition: color .3s;
+}
+.timer.hot { color:var(--danger); animation: throb .6s ease infinite; }
+@keyframes throb { 0%,100% { opacity:1; } 50% { opacity:.55; } }
+
+.live-stats { display:flex; gap:36px; }
+.ls-item { text-align:center; }
+.ls-val { font-family:'Orbitron',sans-serif; font-size:1.7rem; font-weight:700; }
+.ls-lbl { font-size:.65rem; color:var(--text-dim); letter-spacing:1.5px; text-transform:uppercase; margin-top:2px; }
+.ls-wpm { color:var(--cyan); }
+.ls-acc { color:var(--success); }
+
+.prog-wrap { height:3px; background:var(--surface2); }
+.prog-bar { height:100%; background:linear-gradient(90deg,var(--cyan),#a78bfa); transition:width 1s linear; width:100%; }
+
+.test-body { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:36px 24px; }
+
+.contestant-tag {
+  background:var(--surface); border:1px solid var(--border); border-radius:8px;
+  padding:10px 22px; margin-bottom:28px; font-size:.85rem;
+  color:var(--text-dim); display:flex; gap:20px; flex-wrap:wrap;
+}
+.contestant-tag b { color:var(--text); font-weight:600; }
+
+.test-box { width:100%; max-width:800px; }
+
+/* start overlay */
+.start-overlay {
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  padding:48px 24px; gap:18px;
+}
+.start-overlay .big-icon { font-size:3.5rem; }
+.start-overlay h2 { font-family:'Orbitron',sans-serif; font-size:1.6rem; }
+.start-overlay p { color:var(--text-dim); max-width:380px; line-height:1.7; }
+
+/* text display */
+.text-panel {
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  padding:26px 28px; font-family:'DM Mono',monospace; font-size:1.05rem;
+  line-height:1.9; min-height:130px; margin-bottom:14px;
+  user-select:none; letter-spacing:.4px;
+}
+.c-done  { color:var(--text); }
+.c-wrong { color:var(--danger); background:rgba(252,92,125,.12); border-radius:2px; }
+.c-cursor{ border-left:2px solid var(--cyan); animation: cur 1s step-end infinite; }
+.c-wait  { color:rgba(232,236,244,.25); }
+@keyframes cur { 0%,100% { border-color:var(--cyan); } 50% { border-color:transparent; } }
+
+.type-area {
+  width:100%; background:var(--surface2); border:1px solid var(--border);
+  border-radius:9px; padding:14px 16px; color:var(--text);
+  font-family:'DM Mono',monospace; font-size:.95rem; outline:none;
+  resize:none; transition: border-color .2s;
+}
+.type-area:focus { border-color:var(--cyan); }
+.type-hint { text-align:center; color:var(--text-dim); font-size:.78rem; margin-top:10px; }
+
+/* ══════════════════════════════ RESULT ══════════════════════════════ */
+#result { align-items:center; justify-content:center; padding:20px; }
+.result-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:18px;
+  padding:48px; max-width:520px; width:100%; text-align:center;
+  animation: fadeUp .5s ease both;
+}
+.result-icon { font-size:3.2rem; margin-bottom:18px; }
+.result-title { font-family:'Orbitron',sans-serif; font-size:1.4rem; margin-bottom:8px; }
+.result-sub  { color:var(--text-dim); margin-bottom:36px; font-size:.95rem; line-height:1.6; }
+
+.score-row {
+  display:flex; justify-content:center; gap:0; margin-bottom:32px;
+  background:var(--surface2); border:1px solid var(--border); border-radius:12px; overflow:hidden;
+}
+.score-cell {
+  flex:1; padding:24px 20px; text-align:center;
+  border-right:1px solid var(--border);
+}
+.score-cell:last-child { border-right:none; }
+.score-n { font-family:'Orbitron',sans-serif; font-size:2.4rem; font-weight:700; }
+.score-l { font-size:.7rem; color:var(--text-dim); letter-spacing:1.5px; text-transform:uppercase; margin-top:5px; }
+
+.status-box {
+  border-radius:9px; padding:12px 16px; font-size:.88rem;
+  margin-bottom:20px; display:none;
+}
+.status-box.ok  { background:rgba(67,233,123,.08); border:1px solid rgba(67,233,123,.25); color:var(--success); display:block; }
+.status-box.err { background:rgba(252,92,125,.08); border:1px solid rgba(252,92,125,.25); color:var(--danger); display:block; }
+.status-box.load{ background:var(--surface2); border:1px solid var(--border); color:var(--text-dim); display:block; }
+
+.result-btns { display:flex; gap:12px; }
+
+/* ══════════════════════════════ ADMIN ══════════════════════════════ */
+#admin { padding:32px 36px; }
+
+.admin-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:36px; flex-wrap:wrap; gap:16px;
+}
+.admin-title { font-family:'Orbitron',sans-serif; font-size:1.7rem; }
+.admin-sub  { color:var(--text-dim); font-size:.85rem; margin-top:4px; }
+.admin-actions { display:flex; gap:10px; }
+
+.refresh-btn {
+  background:var(--surface); border:1px solid var(--border); color:var(--text);
+  padding:10px 20px; border-radius:8px; cursor:pointer; font-family:'Syne',sans-serif;
+  font-size:.85rem; transition:all .2s;
+}
+.refresh-btn:hover { border-color:var(--cyan); color:var(--cyan); }
+
+/* podium */
+.podium {
+  display:flex; justify-content:center; align-items:flex-end;
+  gap:14px; margin-bottom:36px; flex-wrap:wrap;
+}
+.pod-item {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; padding:22px 20px; text-align:center; min-width:160px;
+  transition: transform .2s;
+}
+.pod-item:hover { transform:translateY(-4px); }
+.pod-1 { border-color:rgba(246,201,14,.4); background:rgba(246,201,14,.04); transform:translateY(-18px); }
+.pod-2 { border-color:rgba(176,190,197,.3); }
+.pod-3 { border-color:rgba(205,140,58,.3); }
+.pod-medal { font-size:2.2rem; margin-bottom:10px; }
+.pod-name  { font-weight:700; font-size:.95rem; margin-bottom:4px; }
+.pod-id    { font-size:.78rem; color:var(--text-dim); font-family:'DM Mono',monospace; margin-bottom:10px; }
+.pod-wpm   { font-family:'Orbitron',sans-serif; font-size:1.6rem; font-weight:700; }
+.pod-unit  { font-size:.65rem; color:var(--text-dim); letter-spacing:1.5px; }
+.pod-1 .pod-wpm { color:var(--gold); }
+.pod-2 .pod-wpm { color:var(--silver); }
+.pod-3 .pod-wpm { color:var(--bronze); }
+
+/* table */
+.lb-wrap { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+.lb-head {
+  display:grid; grid-template-columns:56px 1fr 150px 1fr 90px 90px;
+  padding:13px 20px; background:var(--surface2);
+  border-bottom:1px solid var(--border);
+  font-size:.68rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-dim);
+}
+.lb-row {
+  display:grid; grid-template-columns:56px 1fr 150px 1fr 90px 90px;
+  padding:16px 20px; border-bottom:1px solid rgba(255,255,255,.03);
+  font-size:.92rem; align-items:center; transition:background .15s;
+}
+.lb-row:hover { background:var(--surface2); }
+.lb-row:last-child { border-bottom:none; }
+.rank-cell { font-family:'Orbitron',sans-serif; font-size:.78rem; color:var(--text-dim); }
+.r1 .rank-cell { color:var(--gold); }
+.r2 .rank-cell { color:var(--silver); }
+.r3 .rank-cell { color:var(--bronze); }
+.wpm-cell { font-family:'Orbitron',sans-serif; color:var(--cyan); font-size:.95rem; }
+.acc-cell { color:var(--success); }
+.id-cell  { font-family:'DM Mono',monospace; font-size:.82rem; color:var(--text-dim); }
+.email-cell { font-size:.82rem; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+.empty-state { text-align:center; padding:56px; color:var(--text-dim); }
+.empty-icon  { font-size:2.8rem; margin-bottom:12px; }
+
+/* ══════════════════════════════ MODAL ══════════════════════════════ */
+.overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(7,9,15,.88); backdrop-filter:blur(6px);
+  z-index:100; justify-content:center; align-items:center; padding:20px;
+}
+.overlay.on { display:flex; }
+.modal {
+  background:var(--surface); border:1px solid var(--border-bright);
+  border-radius:18px; padding:40px; max-width:400px; width:100%;
+  animation: fadeUp .3s ease both;
+}
+.modal h3 { font-family:'Orbitron',sans-serif; font-size:1.2rem; margin-bottom:8px; }
+.modal p  { color:var(--text-dim); font-size:.9rem; margin-bottom:24px; line-height:1.6; }
+.modal-btns { display:flex; gap:10px; margin-top:18px; }
+.modal-pw-err { color:var(--danger); font-size:.82rem; margin-top:6px; display:none; }
+
+/* ══════════════════════════════ UTILS ══════════════════════════════ */
+.spin {
+  display:inline-block; width:14px; height:14px;
+  border:2px solid var(--border-bright); border-top-color:var(--cyan);
+  border-radius:50%; animation:spin .7s linear infinite;
+  vertical-align:middle; margin-right:7px;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+@media (max-width:640px) {
+  .lb-head, .lb-row { grid-template-columns:44px 1fr 100px 80px 80px; }
+  .lb-head > *:nth-child(4), .lb-row > *:nth-child(4) { display:none; }
+  .test-top { padding:12px 16px; }
+  .timer { font-size:1.8rem; }
+  .ls-val { font-size:1.4rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ░░░░░░░░░░░░░░░ HOME ░░░░░░░░░░░░░░░ -->
+<div id="home" class="screen active">
+  <nav class="nav">
+    <div class="logo">IUB ACM SC <em>WPM</em></div>
+    <div class="nav-right">
+      <button class="btn btn-ghost" onclick="openAdminModal()">⚙ Admin Panel</button>
+    </div>
+  </nav>
+  <div class="hero-wrap" style="padding:60px 20px;">
+    <div class="pill" id="contest-pill">Jun 7–11, 2026 &nbsp;·&nbsp; 9 AM – 5 PM Daily</div>
+    <h1>Prove Your<br><span class="hi">Typing Speed</span></h1>
+    <p class="hero-p">Welcome to the booth of IUB ACM Student Chapter! Here you can participate in 1-minute typing contest just by entering your Name, IUB ID and IUB Email Address. Please note the followings:<br><br>
+- You can participate the contest once in a day. You are welcomed to try again on the next day, the best one will be counted by the end of this contest!<br>
+- The results will be published on by the end of this contest<br>
+- Top 3 ranking holders will be announced in our socials!<br><br>
+Good luck! Just do it!</p>
+    <div class="stats-strip">
+      <div class="stat-cell"><div class="stat-n">60s</div><div class="stat-l">Time Limit</div></div>
+      <div class="stat-cell"><div class="stat-n" id="days-remaining">30</div><div class="stat-l">Days Left</div></div>
+      <div class="stat-cell"><div class="stat-n">500+</div><div class="stat-l">Students</div></div>
+      <div class="stat-cell"><div class="stat-n">3</div><div class="stat-l">Winners</div></div>
+    </div>
+    <div class="cta-row">
+      <button class="btn btn-primary" onclick="showScreen('register')">Join Contest →</button>
+      <button class="btn btn-outline" onclick="openAdminModal()">View Leaderboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ░░░░░░░░░░░░░░░ REGISTER ░░░░░░░░░░░░░░░ -->
+<div id="register" class="screen">
+  <nav class="nav">
+    <div class="logo">IUB ACM SC <em>WPM</em></div>
+    <button class="btn btn-ghost" onclick="showScreen('home')">← Home</button>
+  </nav>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Enter Your Details</div>
+        <div class="card-sub">Fill in your information before the test. Your score will be saved under these details.</div>
+      </div>
+      <div class="field">
+        <label class="field-label">Full Name</label>
+        <input class="field-input" id="inp-name" type="text" placeholder="e.g. Rahim Uddin" autocomplete="off">
+        <div class="field-err" id="err-name">Please enter your full name.</div>
+      </div>
+      <div class="field">
+        <label class="field-label">Student ID</label>
+        <input class="field-input" id="inp-id" type="text" placeholder="e.g. 2021668" autocomplete="off">
+        <div class="field-err" id="err-id">Please enter your student ID.</div>
+      </div>
+      <div class="field">
+        <label class="field-label">IUB Email Address</label>
+        <input class="field-input" id="inp-email" type="email" placeholder="e.g. 2021668@iub.edu.bd" autocomplete="off">
+        <div class="field-err" id="err-email">Please enter a valid email.</div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:10px;" onclick="proceedToTest()">Continue to Test →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ░░░░░░░░░░░░░░░ TEST ░░░░░░░░░░░░░░░ -->
+<div id="test" class="screen">
+  <div class="test-top">
+    <div class="logo" style="font-size:.85rem;">IUB ACM SC <em>WPM</em></div>
+    <div class="timer" id="timer">1:00</div>
+    <div class="live-stats">
+      <div class="ls-item"><div class="ls-val ls-wpm" id="live-wpm">0</div><div class="ls-lbl">WPM</div></div>
+      <div class="ls-item"><div class="ls-val ls-acc" id="live-acc">100%</div><div class="ls-lbl">Accuracy</div></div>
+    </div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
+
+  <div class="test-body">
+    <div class="contestant-tag" id="contestant-tag">
+      Contestant: <b id="tag-name">—</b>&nbsp;|&nbsp; ID: <b id="tag-id">—</b>
+    </div>
+    <div class="test-box">
+      <!-- START OVERLAY -->
+      <div class="start-overlay" id="start-overlay">
+        <div class="big-icon">⌨️</div>
+        <h2>Ready to Type?</h2>
+        <p>Click the button below to start. The 60-second timer begins immediately. Type the given passage as fast and accurately as you can.</p>
+        <button class="btn btn-primary" onclick="beginTest()">Start Test — 60 Seconds</button>
+      </div>
+      <!-- TYPING ZONE -->
+      <div id="typing-zone" style="display:none;">
+        <div class="text-panel" id="text-panel"></div>
+        <textarea class="type-area" id="type-area" rows="3"
+          placeholder="Click here and start typing…"
+          spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+        <div class="type-hint">Type the passage above — focus on accuracy first, speed will follow.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ░░░░░░░░░░░░░░░ RESULT ░░░░░░░░░░░░░░░ -->
+<div id="result" class="screen">
+  <nav class="nav">
+    <div class="logo">IUB ACM SC <em>WPM</em></div>
+    <button class="btn btn-ghost" onclick="showScreen('home')">Home</button>
+  </nav>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div class="result-card">
+      <div class="result-icon" id="res-icon">🎯</div>
+      <div class="result-title">Test Complete!</div>
+      <div class="result-sub" id="res-sub">Your result has been submitted to the leaderboard.</div>
+      <div class="score-row">
+        <div class="score-cell">
+          <div class="score-n" id="res-wpm" style="color:var(--cyan)">—</div>
+          <div class="score-l">Words / Min</div>
+        </div>
+        <div class="score-cell">
+          <div class="score-n" id="res-acc" style="color:var(--success)">—</div>
+          <div class="score-l">Accuracy</div>
+        </div>
+      </div>
+      <div class="status-box" id="save-status"></div>
+      <div class="result-btns">
+        <button class="btn btn-outline" style="flex:1" onclick="showScreen('home')">← Home</button>
+        <button class="btn btn-primary" style="flex:1" onclick="showScreen('register')">Retry</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ░░░░░░░░░░░░░░░ ADMIN ░░░░░░░░░░░░░░░ -->
+<div id="admin" class="screen">
+  <div class="admin-bar">
+    <div>
+      <div class="admin-title">🏆 Leaderboard</div>
+      <div class="admin-sub">Best score per student — refreshes on demand</div>
+    </div>
+    <div class="admin-actions">
+      <button class="refresh-btn" onclick="loadLeaderboard()">⟳ Refresh</button>
+      <button class="btn btn-outline" onclick="showScreen('home')">Exit</button>
+    </div>
+  </div>
+  <div id="podium-wrap"></div>
+  <div class="lb-wrap">
+    <div class="lb-head">
+      <div>Rank</div><div>Name</div><div>Student ID</div><div>Email</div><div>WPM</div><div>Accuracy</div>
+    </div>
+    <div id="lb-body">
+      <div class="empty-state"><div class="empty-icon">📊</div><div>Loading…</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ░░░░░░░░░░░░░░░ ADMIN MODAL ░░░░░░░░░░░░░░░ -->
+<div class="overlay" id="admin-overlay">
+  <div class="modal">
+    <h3>Admin Access</h3>
+    <p>Enter the admin password to view and manage the leaderboard.</p>
+    <div class="field">
+      <label class="field-label">Password</label>
+      <input class="field-input" type="password" id="admin-pw"
+        placeholder="Enter password"
+        onkeydown="if(event.key==='Enter') checkAdminPw()">
+      <div class="modal-pw-err" id="pw-err">Incorrect password. Try again.</div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-outline" style="flex:1" onclick="closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary" style="flex:1" onclick="checkAdminPw()">Enter</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   CONTEST COUNTDOWN  (Jun 7–11, 2026 · 9 AM–5 PM Dhaka time)
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  const START = new Date('2026-06-07T09:00:00+06:00');
+  const END   = new Date('2026-06-11T17:00:00+06:00');
+  function updateCountdown() {
+    const now  = new Date();
+    const el   = document.getElementById('days-remaining');
+    const pill = document.getElementById('contest-pill');
+    if (!el) return;
+    if (now >= END) {
+      el.textContent = '0';
+      if (pill) pill.textContent = 'Contest Ended';
+    } else if (now < START) {
+      const diff = START - now;
+      el.textContent = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    } else {
+      const diff = END - now;
+      el.textContent = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    }
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 60000);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   ⚙️  CONFIGURATION  ← update these two values after setup
+   ═══════════════════════════════════════════════════════════════ */
+const CONFIG = {
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbysDJWvGuKLql5I1brSiN26yA3X0f7govTOlNi1fVmVJGoLZ4RNLEyrtaE9MBNRvCSY/exec',  // ← paste your deployed Apps Script URL
+  ADMIN_PW:   'fh69695',                  // ← change to your preferred password
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   PASSAGES  (randomised per attempt)
+   ═══════════════════════════════════════════════════════════════ */
+const PASSAGES = [
+  "The quick brown fox jumps over the lazy dog near the riverbank. Early morning sunlight filters through the tall oak trees as birds begin their daily chorus. A gentle breeze stirs the golden wheat fields stretching toward the distant mountains on the horizon.",
+  "Technology has transformed how we communicate and share information across the globe. Every day millions of people use smartphones and computers to connect with friends and access knowledge that was once found only in libraries or universities.",
+  "Reading books regularly is one of the best ways to expand your vocabulary and sharpen your mind. Great authors have the ability to transport readers to different places and times through the power of carefully chosen words and vivid descriptions.",
+  "Scientists around the world are working to solve pressing challenges facing humanity today. From renewable energy to medical breakthroughs their research has the potential to improve the quality of life for billions of people in the coming decades.",
+  "The history of human civilization is a story of curiosity progress and remarkable adaptation. From ancient stone tools to modern artificial intelligence people have always found creative ways to overcome obstacles and build a better future.",
+  "Music has the remarkable ability to evoke powerful emotions and unlock distant memories. Whether it is a classical symphony or a modern pop song the universal language of music connects people across all cultures ages and walks of life.",
+  "Exercise and physical activity are essential parts of a healthy and balanced lifestyle. Regular movement strengthens muscles improves heart health boosts mood and sharpens concentration helping people of all ages live longer more fulfilling lives.",
+  "The ocean covers more than seventy percent of the earth and is home to an astonishing variety of life. From microscopic plankton to the massive blue whale the sea contains some of the most fascinating creatures our planet has ever produced.",
+  "Effective communication is one of the most valuable skills a person can develop throughout their lifetime. Being able to express ideas clearly listen attentively and adapt your message to different audiences opens countless doors in both work and personal relationships.",
+  "Urban gardens and rooftop farms are becoming increasingly popular in cities around the world. These green spaces not only produce fresh food for local communities but also improve air quality reduce heat and provide peaceful retreats from the noise of city life.",
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════════════════════ */
+let student  = {};
+let testData = { passage:'', startTime:null, timer:null, timeLeft:60, running:false, done:false, typed:'' };
+
+/* ═══════════════════════════════════════════════════════════════
+   SCREEN ROUTER
+   ═══════════════════════════════════════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if (id === 'admin') loadLeaderboard();
+  if (id === 'register' || id === 'home') {
+    history.replaceState(null, '', id === 'register' ? '#register' : '#');
+  }
+}
+
+/* Honour the URL hash on first load */
+(function() {
+  if (window.location.hash === '#register') {
+    showScreen('register');
+  }
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   REGISTER
+   ═══════════════════════════════════════════════════════════════ */
+function proceedToTest() {
+  const name  = document.getElementById('inp-name').value.trim();
+  const id    = document.getElementById('inp-id').value.trim();
+  const email = document.getElementById('inp-email').value.trim();
+  let ok = true;
+  ['name','id','email'].forEach(k => document.getElementById('err-'+k).style.display='none');
+  if (!name)                { document.getElementById('err-name').style.display='block';  ok=false; }
+  if (!id)                  { document.getElementById('err-id').style.display='block';    ok=false; }
+  if (!email||!email.includes('@')) { document.getElementById('err-email').style.display='block'; ok=false; }
+  if (!ok) return;
+
+  student = { name, id, email };
+  document.getElementById('tag-name').textContent = name;
+  document.getElementById('tag-id').textContent   = id;
+
+  /* reset test */
+  const passage = PASSAGES[Math.floor(Math.random()*PASSAGES.length)];
+  testData = { passage, startTime:null, timer:null, timeLeft:60, running:false, done:false, typed:'' };
+  document.getElementById('timer').textContent = '1:00';
+  document.getElementById('timer').classList.remove('hot');
+  document.getElementById('live-wpm').textContent = '0';
+  document.getElementById('live-acc').textContent = '100%';
+  document.getElementById('prog-bar').style.width = '100%';
+  document.getElementById('start-overlay').style.display = 'flex';
+  document.getElementById('typing-zone').style.display   = 'none';
+  document.getElementById('type-area').removeEventListener('input', onType);
+
+  showScreen('test');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TYPING TEST
+   ═══════════════════════════════════════════════════════════════ */
+function beginTest() {
+  document.getElementById('start-overlay').style.display = 'none';
+  document.getElementById('typing-zone').style.display   = 'block';
+  renderPassage('', testData.passage);
+  const ta = document.getElementById('type-area');
+  ta.value = '';
+  ta.disabled = false;
+  ta.focus();
+  ta.addEventListener('input', onType);
+  testData.startTime = Date.now();
+  testData.running   = true;
+  testData.timer     = setInterval(tick, 1000);
+}
+
+function tick() {
+  testData.timeLeft = Math.max(0, testData.timeLeft - 1);
+  const m = Math.floor(testData.timeLeft/60);
+  const s = testData.timeLeft % 60;
+  const el = document.getElementById('timer');
+  el.textContent = `${m}:${String(s).padStart(2,'0')}`;
+  document.getElementById('prog-bar').style.width = `${(testData.timeLeft/60)*100}%`;
+  if (testData.timeLeft <= 10) el.classList.add('hot');
+  if (testData.timeLeft <= 0)  endTest();
+}
+
+function onType(e) {
+  if (testData.done) return;
+  testData.typed = e.target.value;
+  renderPassage(testData.typed, testData.passage);
+  const elapsed = (Date.now() - testData.startTime) / 60000;
+  const wCount  = testData.typed.trim().split(/\s+/).filter(Boolean).length;
+  document.getElementById('live-wpm').textContent = elapsed>0 ? Math.round(wCount/elapsed) : 0;
+  let corr=0;
+  for (let i=0;i<testData.typed.length;i++) if (testData.typed[i]===testData.passage[i]) corr++;
+  const acc = testData.typed.length>0 ? Math.round((corr/testData.typed.length)*100) : 100;
+  document.getElementById('live-acc').textContent = acc+'%';
+}
+
+function renderPassage(typed, passage) {
+  let html = '';
+  for (let i=0;i<passage.length;i++) {
+    const ch = passage[i]===' ' ? '&nbsp;' : escCh(passage[i]);
+    if (i < typed.length) {
+      if (typed[i]===passage[i]) html += `<span class="c-done">${ch}</span>`;
+      else html += `<span class="c-wrong">${passage[i]===' '?'&nbsp;':escCh(passage[i])}</span>`;
+    } else if (i===typed.length) {
+      html += `<span class="c-cursor c-wait">${ch}</span>`;
+    } else {
+      html += `<span class="c-wait">${ch}</span>`;
+    }
+  }
+  document.getElementById('text-panel').innerHTML = html;
+}
+
+function escCh(c) {
+  return c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function endTest() {
+  if (testData.done) return;
+  testData.done = true;
+  clearInterval(testData.timer);
+  document.getElementById('type-area').disabled = true;
+
+  /* final WPM: count correctly typed words */
+  const typed   = testData.typed;
+  const passage = testData.passage;
+  const words   = typed.trim().split(/\s+/).filter(Boolean).length;
+  const wpm     = words; // exactly 1 minute
+
+  let corr = 0;
+  for (let i=0;i<typed.length;i++) if (i<passage.length && typed[i]===passage[i]) corr++;
+  const accuracy = typed.length>0 ? Math.round((corr/typed.length)*100) : 0;
+
+  /* rating emoji */
+  const icon = wpm>=80?'🚀':wpm>=60?'⚡':wpm>=40?'🎯':'✍️';
+  document.getElementById('res-icon').textContent = icon;
+  document.getElementById('res-wpm').textContent  = wpm;
+  document.getElementById('res-acc').textContent  = accuracy+'%';
+  document.getElementById('res-sub').textContent  = `Well done, ${student.name}! Your score is being saved.`;
+
+  showScreen('result');
+  saveResult(wpm, accuracy);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GOOGLE SHEETS — SAVE
+   ═══════════════════════════════════════════════════════════════ */
+async function saveResult(wpm, accuracy) {
+  const box = document.getElementById('save-status');
+  box.className = 'status-box load';
+  box.innerHTML = '<span class="spin"></span>Saving your score to the leaderboard…';
+
+  const payload = {
+    name:      student.name,
+    studentId: student.id,
+    email:     student.email,
+    wpm:       wpm,
+    accuracy:  accuracy,
+    day:       new Date().toLocaleDateString('en-BD', { timeZone:'Asia/Dhaka' }),
+    timestamp: new Date().toISOString(),
+  };
+
+  /* DEMO MODE */
+  if (CONFIG.SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    setTimeout(()=>{
+      box.className = 'status-box ok';
+      box.textContent = '✓ Demo mode — connect Google Sheets to save permanently.';
+    }, 1000);
+    return;
+  }
+
+  try {
+    await fetch(CONFIG.SCRIPT_URL, {
+      method: 'POST',
+      mode:   'no-cors',
+      headers:{ 'Content-Type':'application/json' },
+      body:   JSON.stringify(payload),
+    });
+    box.className = 'status-box ok';
+    box.textContent = '✓ Score saved! Check the leaderboard to see your rank.';
+  } catch(err) {
+    box.className = 'status-box err';
+    box.textContent = '✗ Could not save score — please check your internet connection.';
+    console.error(err);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GOOGLE SHEETS — LOAD LEADERBOARD
+   ═══════════════════════════════════════════════════════════════ */
+async function loadLeaderboard() {
+  document.getElementById('lb-body').innerHTML =
+    '<div class="empty-state"><span class="spin"></span> Loading results…</div>';
+  document.getElementById('podium-wrap').innerHTML = '';
+
+  /* DEMO MODE */
+  if (CONFIG.SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    const demo = [
+      { name:'Rahim Uddin',    studentId:'CSE-2401001', email:'rahim@uni.edu',    wpm:89, accuracy:98 },
+      { name:'Ayesha Begum',   studentId:'CSE-2401042', email:'ayesha@uni.edu',   wpm:76, accuracy:96 },
+      { name:'Karim Khan',     studentId:'EEE-2401015', email:'karim@uni.edu',    wpm:71, accuracy:93 },
+      { name:'Fatema Ali',     studentId:'CSE-2401088', email:'fatema@uni.edu',   wpm:65, accuracy:91 },
+      { name:'Hasan Mahmud',   studentId:'BBA-2401007', email:'hasan@uni.edu',    wpm:58, accuracy:95 },
+      { name:'Nadia Islam',    studentId:'CSE-2401033', email:'nadia@uni.edu',    wpm:54, accuracy:89 },
+    ];
+    renderLeaderboard(demo);
+    return;
+  }
+
+  try {
+    const res  = await fetch(CONFIG.SCRIPT_URL + '?action=get', { redirect:'follow' });
+    const data = await res.json();
+    if (data.success) renderLeaderboard(data.data);
+    else throw new Error(data.error || 'Server error');
+  } catch(err) {
+    document.getElementById('lb-body').innerHTML =
+      `<div class="empty-state"><div class="empty-icon">⚠️</div>
+       <div>Could not load data.<br><small>${escHtml(err.message)}</small></div></div>`;
+    console.error(err);
+  }
+}
+
+function renderLeaderboard(data) {
+  if (!data||data.length===0) {
+    document.getElementById('lb-body').innerHTML =
+      '<div class="empty-state"><div class="empty-icon">📭</div><div>No entries yet.</div></div>';
+    return;
+  }
+
+  /* Podium */
+  const medals = ['🥇','🥈','🥉'];
+  const cls    = ['pod-1','pod-2','pod-3'];
+  let podHTML  = '<div class="podium">';
+  for (let i=0;i<Math.min(3,data.length);i++) {
+    const s = data[i];
+    podHTML += `<div class="pod-item ${cls[i]}">
+      <div class="pod-medal">${medals[i]}</div>
+      <div class="pod-name">${escHtml(s.name)}</div>
+      <div class="pod-id">${escHtml(s.studentId)}</div>
+      <div class="pod-wpm">${s.wpm}</div>
+      <div class="pod-unit">WPM</div>
+    </div>`;
+  }
+  podHTML += '</div>';
+  document.getElementById('podium-wrap').innerHTML = podHTML;
+
+  /* Table */
+  let rows = '';
+  data.forEach((s,i) => {
+    rows += `<div class="lb-row r${i+1}">
+      <div class="rank-cell">#${i+1}</div>
+      <div style="font-weight:600;">${escHtml(s.name)}</div>
+      <div class="id-cell">${escHtml(s.studentId)}</div>
+      <div class="email-cell">${escHtml(s.email)}</div>
+      <div class="wpm-cell">${s.wpm}</div>
+      <div class="acc-cell">${s.accuracy}%</div>
+    </div>`;
+  });
+  document.getElementById('lb-body').innerHTML = rows;
+}
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN MODAL
+   ═══════════════════════════════════════════════════════════════ */
+function openAdminModal() {
+  document.getElementById('admin-overlay').classList.add('on');
+  document.getElementById('admin-pw').value = '';
+  document.getElementById('pw-err').style.display = 'none';
+  setTimeout(()=>document.getElementById('admin-pw').focus(), 100);
+}
+function closeAdminModal() {
+  document.getElementById('admin-overlay').classList.remove('on');
+}
+function checkAdminPw() {
+  const pw = document.getElementById('admin-pw').value;
+  if (pw === CONFIG.ADMIN_PW) {
+    closeAdminModal();
+    showScreen('admin');
+  } else {
+    document.getElementById('pw-err').style.display = 'block';
+    document.getElementById('admin-pw').value = '';
+    document.getElementById('admin-pw').focus();
+  }
+}
+document.getElementById('admin-overlay').addEventListener('click', function(e) {
+  if (e.target===this) closeAdminModal();
+});
+</script>
+</body>
+</html>
