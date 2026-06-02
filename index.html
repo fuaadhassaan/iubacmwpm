@@ -66,12 +66,12 @@ body::before {
 .btn-edit { background: rgba(99,179,237,0.12); color: var(--cyan); border: 1px solid rgba(99,179,237,0.25); }
 .btn-edit:hover { background: var(--cyan); color: #07090f; }
 
-#home { align-items: center; justify-content: flex-start; overflow-y: auto; padding-bottom: 60px; }
-.hero-wrap { text-align: center; max-width: 680px; width:100%; padding:50px 20px 30px 20px; animation: fadeUp .6s ease both; }
-.pill { display:inline-flex; background: var(--cyan-glow); border: 1px solid var(--border-bright); color: var(--cyan); padding:6px 18px; border-radius:100px; font-size:.72rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:24px; }
-h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight:900; line-height:1.1; margin-bottom:20px; }
+#home { align-items: center; justify-content: flex-start; overflow-y: auto; padding-bottom: 30px; }
+.hero-wrap { text-align: center; max-width: 720px; width:100%; padding:28px 28px 16px 28px; animation: fadeUp .6s ease both; }
+.pill { display:inline-flex; align-items:center; gap:8px; background: var(--cyan-glow); border: 1px solid var(--border-bright); color: var(--cyan); padding:5px 16px; border-radius:100px; font-size:.72rem; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px; }
+h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(2rem, 5vw, 3.4rem); font-weight:900; line-height:1.08; margin-bottom:16px; }
 h1 span { color:var(--cyan); }
-.hero-p { color:var(--text-dim); font-size:1.05rem; line-height:1.7; margin-bottom:30px; }
+.hero-p { color:var(--text-dim); font-size:1.05rem; line-height:1.7; margin-bottom:20px; }
 
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding:40px; width:100%; max-width:480px; animation: fadeUp .4s ease both; }
 .field { margin-bottom:18px; text-align:left; }
@@ -110,10 +110,10 @@ h1 span { color:var(--cyan); }
 .actions-cell { display:flex; gap:6px; }
 
 /* PUBLIC LEADERBOARD STYLE STACK */
-.pub-lb-container { width: 100%; max-width: 850px; margin: 20px auto; padding: 0 20px; animation: fadeUp .8s ease both; }
-.pub-lb-head { display: grid; grid-template-columns: 80px 2fr 1.5fr 1fr 1fr; padding: 14px 20px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px 10px 0 0; font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+.pub-lb-container { width: 100%; max-width: 720px; margin: 12px auto; padding: 0 20px; animation: fadeUp .8s ease both; }
+.pub-lb-head { display: grid; grid-template-columns: 80px 2fr 1.5fr 1fr 1fr; padding: 10px 20px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px 10px 0 0; font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
 .pub-lb-body { background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 10px 10px; overflow: hidden; }
-.pub-lb-row { display: grid; grid-template-columns: 80px 2fr 1.5fr 1fr 1fr; padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.95rem; align-items: center; }
+.pub-lb-row { display: grid; grid-template-columns: 80px 2fr 1.5fr 1fr 1fr; padding: 9px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.88rem; align-items: center; }
 .pub-lb-row:last-child { border-bottom: none; }
 .rank-badge { width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.75rem; font-weight: bold; font-family: 'Orbitron', sans-serif; }
 .rank-1 { background: var(--gold); color: #000; }
@@ -136,16 +136,29 @@ h1 span { color:var(--cyan); }
   </nav>
   
   <div class="hero-wrap">
-    <div class="pill">Summer Session Contest 2026</div>
-    <h1>Test Your <span>Typing Velocity</span></h1>
-    <p class="hero-p">Compete with fellow IUB students. Enter your identification details to unlock the typing dashboard. Strict limit of one run per calendar day.</p>
+    <div class="pill">
+      <span style="width:7px;height:7px;background:var(--cyan);border-radius:50%;display:inline-block;flex-shrink:0;"></span>
+      JUN 7–11, 2026 &nbsp;·&nbsp; 9 AM – 5 PM DAILY
+    </div>
+    <h1>Prove Your<br><span>Typing Speed</span></h1>
+    <p style="color:var(--text); font-size:.97rem; line-height:1.7; margin-bottom:14px;">
+      Welcome to the booth of <strong>IUB ACM Student Chapter!</strong> Here you can participate in a
+      <strong>1-minute typing contest</strong> just by entering your Name, IUB ID and IUB Email Address.
+    </p>
+    <p style="color:var(--text-dim); font-size:.82rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Please note the followings:</p>
+    <ul style="list-style:none; color:var(--text-dim); font-size:.9rem; line-height:1.75; margin-bottom:16px; text-align:left; display:inline-block;">
+      <li style="margin-bottom:4px;">— You can participate the contest <strong style="color:var(--text);">once in a day.</strong> You are welcomed to try again on the next day, the best one will be counted by the end of this contest!</li>
+      <li style="margin-bottom:4px;">— The results will be published by the <strong style="color:var(--text);">end of this contest.</strong></li>
+      <li>— <strong style="color:var(--text);">Top 3 ranking holders</strong> will be announced on our socials!</li>
+    </ul>
+    <p style="color:var(--text-dim); font-size:.9rem; margin-bottom:20px; font-style:italic;">Good luck! Just do it!</p>
     <div>
       <button class="btn btn-primary" onclick="showScreen('register')">Enter Typing Arena</button>
     </div>
   </div>
 
   <div class="pub-lb-container">
-    <h3 style="font-family:'Orbitron'; margin-bottom:12px; font-size:1.1rem; color:var(--cyan); text-align:left;">🏆 Dynamic Live Standings</h3>
+    <h3 style="font-family:'Orbitron'; margin-bottom:10px; font-size:1rem; color:var(--cyan); text-align:left;">🏆 Dynamic Live Standings</h3>
     <div class="pub-lb-head">
       <div>Rank</div><div>Name</div><div>Student ID</div><div>WPM</div><div>Accuracy</div>
     </div>
@@ -428,7 +441,8 @@ async function fetchPublicLeaderboard() {
     }
     
     let html = '';
-    payload.data.forEach((student, index) => {
+    const top10 = payload.data.slice(0, 10);
+    top10.forEach((student, index) => {
       const rank = index + 1;
       let badgeStyle = `<span class="rank-badge">${rank}</span>`;
       if(rank <= 3) badgeStyle = `<span class="rank-badge rank-${rank}">${rank}</span>`;
