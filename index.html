@@ -83,10 +83,16 @@ h1 span { color:var(--cyan); }
 .text-panel { 
   background: var(--surface); border: 1px solid var(--border); border-radius: 12px; 
   padding: 24px; font-family: 'DM Mono', monospace; font-size: 1.2rem; line-height: 1.8; 
-  max-height: 150px; overflow-y: hidden; position: relative; user-select: none; 
-  white-space: pre-wrap; word-break: break-word; transition: all 0.25s ease;
+  height: 150px; overflow: hidden; position: relative; user-select: none; 
+  white-space: pre-wrap; word-break: break-word;
 }
-.text-scroller { position: relative; top: 0; transition: top 0.2s ease; }
+/* fade-out mask so text smoothly disappears at bottom instead of hard-clipping */
+.text-panel::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 48px;
+  background: linear-gradient(transparent, var(--surface));
+  pointer-events: none; border-radius: 0 0 12px 12px;
+}
+.text-scroller { position: absolute; top: 24px; left: 24px; right: 24px; transition: top 0.15s ease; }
 .c-done { color: var(--text-dim); opacity: 0.4; }
 .c-wrong { color: var(--danger); background: rgba(252,92,125,.15); border-radius: 3px; }
 .c-cursor { background: var(--cyan); color: #000; border-radius: 2px; box-shadow: 0 0 8px var(--cyan); }
@@ -226,26 +232,55 @@ h1 span { color:var(--cyan); }
 
 <div id="admin" class="screen">
   <nav class="nav">
-    <div class="logo">⚙️ System Administrative Control Console</div>
-    <button class="btn btn-ghost" onclick="showScreen('home')">🔒 Terminate Session</button>
+    <div class="logo">⚙️ Admin Console</div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-ghost" onclick="showScreen('home')">🏠 Home</button>
+    </div>
   </nav>
   <div class="admin-content">
-    <div class="admin-bar">
-      <div>
-        <h2 style="font-family:'Orbitron';">Sheet Transaction Records</h2>
-        <p style="color:var(--text-dim); font-size:.85rem; margin-top:4px;">Modifying rows here alters the core spreadsheet database instantly.</p>
+    <!-- Tab Bar -->
+    <div style="display:flex; gap:0; margin-bottom:24px; border:1px solid var(--border); border-radius:10px; overflow:hidden; width:fit-content;">
+      <button id="tab-sheet" class="btn" style="padding:10px 22px; border-radius:0; background:var(--cyan); color:#07090f; font-family:'Orbitron'; font-size:.72rem; letter-spacing:1px; font-weight:700;" onclick="switchAdminTab('sheet')">📋 Sheet Records</button>
+      <button id="tab-board" class="btn btn-ghost" style="padding:10px 22px; border-radius:0; border:none; font-family:'Orbitron'; font-size:.72rem; letter-spacing:1px;" onclick="switchAdminTab('board')">🏆 Leaderboard CRUD</button>
+    </div>
+
+    <!-- Sheet Records Tab -->
+    <div id="admin-tab-sheet">
+      <div class="admin-bar">
+        <div>
+          <h2 style="font-family:'Orbitron';">Sheet Transaction Records</h2>
+          <p style="color:var(--text-dim); font-size:.85rem; margin-top:4px;">Every submission row. Modifications apply instantly to the spreadsheet.</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-edit btn-sm" style="padding:10px 16px;" onclick="openCrudModal(null)">➕ Add Entry</button>
+          <button class="btn btn-ghost btn-sm" onclick="fetchAdminLogs()">⟳ Sync</button>
+        </div>
       </div>
-      <div style="display:flex; gap:10px;">
-        <button class="btn btn-edit btn-sm" style="padding:10px 16px;" onclick="openCrudModal(null)">➕ Add New Entry</button>
-        <button class="btn btn-ghost btn-sm" onclick="fetchAdminLogs()">⟳ Sync Row Data</button>
+      <div class="lb-wrap">
+        <div class="lb-head">
+          <div>Row</div><div>Name</div><div>Student ID</div><div>Email Address</div><div>WPM</div><div>Accuracy</div><div>Actions</div>
+        </div>
+        <div id="admin-rows"></div>
       </div>
     </div>
-    
-    <div class="lb-wrap">
-      <div class="lb-head">
-        <div>Row</div><div>Name</div><div>Student ID</div><div>Email Address</div><div>WPM</div><div>Accuracy</div><div>Actions</div>
+
+    <!-- Leaderboard CRUD Tab -->
+    <div id="admin-tab-board" style="display:none;">
+      <div class="admin-bar">
+        <div>
+          <h2 style="font-family:'Orbitron';">Leaderboard Management</h2>
+          <p style="color:var(--text-dim); font-size:.85rem; margin-top:4px;">Best score per student. Edit or remove entries directly from the rankings view.</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-ghost btn-sm" onclick="fetchLeaderboardCrud()">⟳ Refresh</button>
+        </div>
       </div>
-      <div id="admin-rows"></div>
+      <div class="lb-wrap">
+        <div style="display:grid; grid-template-columns:60px 2fr 1.5fr 2fr 90px 100px 160px; padding:16px 20px; background:var(--surface2); font-size:.7rem; color:var(--text-dim); text-transform:uppercase; border-bottom:1px solid var(--border);">
+          <div>Rank</div><div>Name</div><div>Student ID</div><div>Email</div><div>Best WPM</div><div>Accuracy</div><div>Actions</div>
+        </div>
+        <div id="admin-lb-rows"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -305,7 +340,17 @@ const CONFIG = {
 };
 
 let userContext = { name:'', studentId:'', email:'' };
-let testText = "The digital revolution has transformed how computing communities interact across borders. Competitive programming matches logic with extreme speed, pushing parameters beyond simple comprehension. Aspiring network engineers must master syntax structure, algorithm orchestration, and system optimization frameworks daily.";
+const TEXT_POOL = [
+  "The digital revolution has transformed how computing communities interact across borders. Competitive programming matches logic with extreme speed, pushing parameters beyond simple comprehension. Aspiring network engineers must master syntax structure, algorithm orchestration, and system optimization frameworks daily.",
+  "Artificial intelligence continues to reshape industries at an unprecedented pace. Machine learning models require massive datasets and careful tuning to produce reliable results. Engineers who understand both theory and practical implementation will lead the next generation of technological breakthroughs.",
+  "Software development demands patience, precision, and a willingness to embrace continuous learning. Every line of code contributes to a larger system that must remain stable under pressure. Debugging complex programs requires analytical thinking and a deep understanding of logic and architecture.",
+  "University students who engage with extracurricular technology programs gain advantages beyond the classroom. Collaborative projects build communication skills and expose participants to real-world challenges early. Competitions sharpen problem-solving abilities and inspire innovation across all disciplines of engineering.",
+  "Database management systems form the backbone of modern applications and enterprise solutions. Structured query language allows developers to retrieve and manipulate data with precision and speed. Optimizing queries and indexing strategies can dramatically improve the performance of large-scale systems.",
+  "Cybersecurity professionals defend critical infrastructure against increasingly sophisticated threats. Understanding how attacks are executed is essential for building robust and resilient defenses. Regular security audits, patch management, and user education remain the most effective protection strategies.",
+  "Cloud computing has democratized access to powerful infrastructure for startups and enterprises alike. Scalable virtual machines and serverless functions allow developers to deploy applications globally in minutes. Managing costs and latency requires careful architectural decisions at every stage of development.",
+  "Open source collaboration has produced some of the most impactful software tools in modern history. Developers around the world contribute code, report bugs, and improve documentation freely. This model accelerates innovation and ensures that high-quality tools remain accessible to everyone."
+];
+let testText = TEXT_POOL[0];
 let characterArray = [];
 let currentIndex = 0;
 let errorsCount = 0;
@@ -316,8 +361,51 @@ const duration = 60;
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if (id === 'admin') fetchAdminLogs();
+  if (id === 'admin') {
+    switchAdminTab('sheet');
+    fetchAdminLogs();
+  }
   if (id === 'home') fetchPublicLeaderboard();
+  if (id === 'test') {
+    // Pick a fresh random passage every time a student enters the test
+    testText = TEXT_POOL[Math.floor(Math.random() * TEXT_POOL.length)];
+    // Reset start button visibility in case it was hidden in a previous run
+    const startBtn = document.getElementById('start-btn');
+    startBtn.style.display = 'inline-flex';
+    startBtn.disabled = false;
+    startBtn.textContent = 'Unlock Keyboard';
+    // Reset textarea
+    const ta = document.getElementById('type-area');
+    ta.disabled = true;
+    ta.value = '';
+    // Clear the text panel
+    document.getElementById('text-scroller').innerHTML = '';
+    document.getElementById('text-scroller').style.top = '24px';
+    // Reset stats display
+    document.getElementById('live-wpm').textContent = '0';
+    document.getElementById('live-acc').textContent = '100%';
+    document.getElementById('live-timer').textContent = duration;
+    // Stop any lingering timer
+    clearInterval(countdownTimer);
+    currentIndex = 0; errorsCount = 0; startTime = null;
+  }
+}
+
+function switchAdminTab(tab) {
+  const isSheet = tab === 'sheet';
+  document.getElementById('admin-tab-sheet').style.display = isSheet ? 'block' : 'none';
+  document.getElementById('admin-tab-board').style.display = isSheet ? 'none' : 'block';
+
+  const tabSheet = document.getElementById('tab-sheet');
+  const tabBoard = document.getElementById('tab-board');
+  if (isSheet) {
+    tabSheet.style.background = 'var(--cyan)'; tabSheet.style.color = '#07090f'; tabSheet.style.borderBottom = 'none';
+    tabBoard.style.background = 'var(--surface2)'; tabBoard.style.color = 'var(--text-dim)';
+  } else {
+    tabBoard.style.background = 'var(--cyan)'; tabBoard.style.color = '#07090f'; tabBoard.style.borderBottom = 'none';
+    tabSheet.style.background = 'var(--surface2)'; tabSheet.style.color = 'var(--text-dim)';
+    fetchLeaderboardCrud();
+  }
 }
 
 // Automatically load rankings on initial visit
@@ -374,6 +462,14 @@ async function validateAndProceed() {
   document.getElementById('gate-err').style.display = 'none';
 
   if (!name || !id || !email) return;
+
+  // Client-side same-day guard (fast, no network round-trip needed)
+  const todayKey = `submitted_${id.trim().toLowerCase()}_${new Date().toISOString().slice(0,10)}`;
+  if (localStorage.getItem(todayKey)) {
+    document.getElementById('gate-err').textContent = "⛔ Access Denied: You have already submitted a typing speed run today. Please come back tomorrow!";
+    document.getElementById('gate-err').style.display = 'block';
+    return;
+  }
   
   const submitBtn = document.getElementById('btn-reg-submit');
   submitBtn.disabled = true;
@@ -418,7 +514,7 @@ function primeTypingArena() {
   document.getElementById('live-timer').textContent = duration;
   
   const scroller = document.getElementById('text-scroller');
-  scroller.style.top = "0px";
+  scroller.style.top = "24px";
   
   characterArray = testText.split('').map(char => ({ char, state: 'wait' }));
   renderCharacters();
@@ -426,6 +522,7 @@ function primeTypingArena() {
 }
 
 function renderCharacters() {
+  const panel = document.getElementById('text-panel');
   const scroller = document.getElementById('text-scroller');
   scroller.innerHTML = '';
   
@@ -441,11 +538,14 @@ function renderCharacters() {
   
   const cursorSpan = scroller.querySelector('.c-cursor');
   if (cursorSpan) {
-    const offsetTop = cursorSpan.offsetTop;
-    if (offsetTop > 60) {
-      scroller.style.top = `-${offsetTop - 40}px`;
+    const panelPad = 24; // matches left/top padding
+    const panelH = panel.clientHeight - panelPad * 2;
+    const cursorTop = cursorSpan.offsetTop;
+    // Start scrolling once cursor passes halfway point of visible area
+    if (cursorTop > panelH * 0.45) {
+      scroller.style.top = `${panelPad - (cursorTop - panelH * 0.35)}px`;
     } else {
-      scroller.style.top = "0px";
+      scroller.style.top = `${panelPad}px`;
     }
   }
 }
@@ -509,6 +609,10 @@ async function endContestRun() {
   const timeElapsed = startTime ? (new Date() - startTime) / 60000 : 1;
   const finalWpm = Math.round((currentIndex / 5) / (timeElapsed > 1 ? 1 : timeElapsed));
   const finalAcc = currentIndex > 0 ? Math.round(((currentIndex - errorsCount) / currentIndex) * 100) : 100;
+  
+  // Mark this student as submitted today (client-side guard)
+  const todayKey = `submitted_${userContext.studentId.trim().toLowerCase()}_${new Date().toISOString().slice(0,10)}`;
+  localStorage.setItem(todayKey, '1');
   
   document.getElementById('res-wpm').textContent = finalWpm;
   document.getElementById('res-acc').textContent = `${finalAcc}%`;
@@ -589,6 +693,64 @@ async function fetchAdminLogs() {
   }
 }
 
+async function fetchLeaderboardCrud() {
+  const view = document.getElementById('admin-lb-rows');
+  view.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);"><span class="spin"></span> Computing best scores...</div>';
+  
+  try {
+    const res = await fetch(`${CONFIG.SCRIPT_URL}?action=adminFetch`);
+    const payload = await res.json();
+    
+    if (!payload.success || payload.data.length === 0) {
+      view.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);">No submission entries found.</div>';
+      return;
+    }
+    
+    // Compute best score per student, keeping track of rowIndex
+    const bestMap = {};
+    payload.data.forEach(row => {
+      const key = String(row.studentId).trim().toLowerCase();
+      if (!bestMap[key] || Number(row.wpm) > bestMap[key].wpm) {
+        bestMap[key] = { ...row };
+      }
+    });
+    
+    const sorted = Object.values(bestMap).sort((a, b) => b.wpm - a.wpm);
+    
+    if (sorted.length === 0) {
+      view.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);">No entries found.</div>';
+      return;
+    }
+    
+    let htmlStr = '';
+    sorted.forEach((row, idx) => {
+      const rank = idx + 1;
+      let rankBadge = `<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:.75rem;font-family:'Orbitron';font-weight:700;background:var(--surface2);color:var(--text-dim);">${rank}</span>`;
+      if (rank === 1) rankBadge = `<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:.75rem;font-family:'Orbitron';font-weight:700;background:var(--gold);color:#000;">${rank}</span>`;
+      else if (rank === 2) rankBadge = `<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:.75rem;font-family:'Orbitron';font-weight:700;background:var(--silver);color:#000;">${rank}</span>`;
+      else if (rank === 3) rankBadge = `<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:.75rem;font-family:'Orbitron';font-weight:700;background:var(--bronze);color:#000;">${rank}</span>`;
+      
+      htmlStr += `
+      <div style="display:grid; grid-template-columns:60px 2fr 1.5fr 2fr 90px 100px 160px; padding:14px 20px; border-bottom:1px solid rgba(255,255,255,.03); font-size:.9rem; align-items:center;">
+        <div>${rankBadge}</div>
+        <div style="font-weight:600;">${escapeHtml(row.name)}</div>
+        <div style="font-family:'DM Mono'; color:var(--text-dim);">${escapeHtml(row.studentId)}</div>
+        <div style="font-size:.85rem; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis;">${escapeHtml(row.email)}</div>
+        <div style="font-family:'Orbitron'; font-weight:700; color:var(--cyan);">${row.wpm}</div>
+        <div style="color:var(--success); font-weight:600;">${row.accuracy}%</div>
+        <div class="actions-cell">
+          <button class="btn btn-sm btn-edit" onclick='openCrudModal(${JSON.stringify(row).replace(/'/g, "&apos;")})'>Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="executeRowPurge(${row.rowIndex}, true)">Delete</button>
+        </div>
+      </div>`;
+    });
+    view.innerHTML = htmlStr;
+  } catch (err) {
+    view.innerHTML = `<div style="text-align:center; padding:40px; color:var(--danger);">Sync failed: ${err.message}</div>`;
+  }
+}
+
+
 function openCrudModal(rowData = null) {
   document.getElementById('crud-overlay').classList.add('on');
   const saveBtn = document.getElementById('crud-save-btn');
@@ -647,13 +809,13 @@ async function commitCrudSave() {
   }
 }
 
-async function executeRowPurge(rowIndex) {
+async function executeRowPurge(rowIndex, fromLeaderboard = false) {
   if (!confirm(`Are you completely sure you want to permanently erase Row #${rowIndex}?`)) return;
   try {
     const res = await fetch(`${CONFIG.SCRIPT_URL}?action=adminDelete&rowIndex=${rowIndex}`);
     const resData = await res.json();
     if (resData.success) {
-      fetchAdminLogs();
+      if (fromLeaderboard) fetchLeaderboardCrud(); else fetchAdminLogs();
     } else {
       alert("Error processing row deletion.");
     }
