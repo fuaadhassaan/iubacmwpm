@@ -37,7 +37,6 @@ body {
   overflow-x: hidden;
 }
 
-/* ── grid bg ── */
 body::before {
   content: '';
   position: fixed; inset: 0;
@@ -48,7 +47,6 @@ body::before {
   z-index: 0; pointer-events: none;
 }
 
-/* ── glow orb ── */
 body::after {
   content: '';
   position: fixed;
@@ -61,7 +59,6 @@ body::after {
 .screen { display:none; min-height:100vh; position:relative; z-index:1; flex-direction:column; }
 .screen.active { display:flex; }
 
-/* ══════════════════════════════ NAV ══════════════════════════════ */
 .nav {
   display: flex; align-items: center; justify-content: space-between;
   padding: 18px 36px;
@@ -78,6 +75,8 @@ body::after {
 .nav-right { display:flex; gap:10px; }
 
 .btn { cursor:pointer; border:none; font-family:'Syne', sans-serif; transition: all .2s; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
 .btn-ghost {
   background: none; border: 1px solid var(--border); color: var(--text-dim);
   padding: 8px 18px; border-radius:8px; font-size:.8rem; letter-spacing:.5px;
@@ -89,8 +88,8 @@ body::after {
   border-radius: 9px; font-family:'Orbitron',sans-serif; font-size:.8rem;
   font-weight:700; letter-spacing:2px; text-transform:uppercase;
 }
-.btn-primary:hover { background:#fff; box-shadow:0 8px 32px rgba(99,179,237,.35); transform:translateY(-1px); }
-.btn-primary:active { transform:translateY(0); }
+.btn-primary:hover:not(:disabled) { background:#fff; box-shadow:0 8px 32px rgba(99,179,237,.35); transform:translateY(-1px); }
+.btn-primary:active:not(:disabled) { transform:translateY(0); }
 
 .btn-outline {
   background: none; border: 1px solid var(--border-bright); color: var(--text);
@@ -98,7 +97,6 @@ body::after {
 }
 .btn-outline:hover { border-color:var(--cyan); color:var(--cyan); }
 
-/* ══════════════════════════════ HOME ══════════════════════════════ */
 #home { align-items: center; justify-content: center; padding: 20px; }
 
 .hero-wrap {
@@ -131,11 +129,11 @@ h1 .hi { color:var(--cyan); }
   background: var(--surface); border: 1px solid var(--border); border-radius:14px;
   overflow:hidden;
 }
-.stat-cell {
+.stats-strip .stat-cell {
   flex:1; padding:20px 24px; text-align:center;
   border-right: 1px solid var(--border);
 }
-.stat-cell:last-child { border-right:none; }
+.stats-strip .stat-cell:last-child { border-right:none; }
 .stat-n {
   font-family:'Orbitron',sans-serif; font-size:1.7rem; font-weight:700; color:var(--cyan);
 }
@@ -143,7 +141,6 @@ h1 .hi { color:var(--cyan); }
 
 .cta-row { display:flex; gap:14px; justify-content:center; align-items:center; flex-wrap:wrap; }
 
-/* ══════════════════════════════ REGISTER ══════════════════════════════ */
 #register { align-items:center; justify-content:center; padding:20px; }
 
 .card {
@@ -168,8 +165,8 @@ h1 .hi { color:var(--cyan); }
 .field-input:focus { border-color:var(--cyan); box-shadow:0 0 0 3px rgba(99,179,237,.1); }
 .field-input::placeholder { color:var(--text-dim); }
 .field-err { color:var(--danger); font-size:.8rem; margin-top:5px; display:none; }
+.field-gate-err { color:var(--danger); background:rgba(252,92,125,0.08); border:1px solid rgba(252,92,125,0.2); padding:12px; border-radius:8px; font-size:.85rem; margin-top:15px; display:none; line-height:1.5; }
 
-/* ══════════════════════════════ TEST ══════════════════════════════ */
 #test { padding:0; }
 
 .test-top {
@@ -207,7 +204,6 @@ h1 .hi { color:var(--cyan); }
 
 .test-box { width:100%; max-width:800px; }
 
-/* start overlay */
 .start-overlay {
   display:flex; flex-direction:column; align-items:center; text-align:center;
   padding:48px 24px; gap:18px;
@@ -216,12 +212,15 @@ h1 .hi { color:var(--cyan); }
 .start-overlay h2 { font-family:'Orbitron',sans-serif; font-size:1.6rem; }
 .start-overlay p { color:var(--text-dim); max-width:380px; line-height:1.7; }
 
-/* text display */
+/* 🛠️ FIX FOR IMAGE_9AF89D.JPG: ENABLE COMPACT WRAPPING RULES */
 .text-panel {
   background:var(--surface); border:1px solid var(--border); border-radius:12px;
   padding:26px 28px; font-family:'DM Mono',monospace; font-size:1.05rem;
   line-height:1.9; min-height:130px; margin-bottom:14px;
   user-select:none; letter-spacing:.4px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 .c-done  { color:var(--text); }
 .c-wrong { color:var(--danger); background:rgba(252,92,125,.12); border-radius:2px; }
@@ -238,7 +237,6 @@ h1 .hi { color:var(--cyan); }
 .type-area:focus { border-color:var(--cyan); }
 .type-hint { text-align:center; color:var(--text-dim); font-size:.78rem; margin-top:10px; }
 
-/* ══════════════════════════════ RESULT ══════════════════════════════ */
 #result { align-items:center; justify-content:center; padding:20px; }
 .result-card {
   background:var(--surface); border:1px solid var(--border); border-radius:18px;
@@ -271,7 +269,6 @@ h1 .hi { color:var(--cyan); }
 
 .result-btns { display:flex; gap:12px; }
 
-/* ══════════════════════════════ ADMIN ══════════════════════════════ */
 #admin { padding:32px 36px; }
 
 .admin-bar {
@@ -289,7 +286,6 @@ h1 .hi { color:var(--cyan); }
 }
 .refresh-btn:hover { border-color:var(--cyan); color:var(--cyan); }
 
-/* podium */
 .podium {
   display:flex; justify-content:center; align-items:flex-end;
   gap:14px; margin-bottom:36px; flex-wrap:wrap;
@@ -307,12 +303,11 @@ h1 .hi { color:var(--cyan); }
 .pod-name  { font-weight:700; font-size:.95rem; margin-bottom:4px; }
 .pod-id    { font-size:.78rem; color:var(--text-dim); font-family:'DM Mono',monospace; margin-bottom:10px; }
 .pod-wpm   { font-family:'Orbitron',sans-serif; font-size:1.6rem; font-weight:700; }
-.pod-unit  { font-size:.65rem; color:var(--text-dim); letter-spacing:1.5px; }
+.pod-unit  { font-size:.65rem; color:var(--text-dim); letter-spacing:1.5px; text-transform:uppercase; }
 .pod-1 .pod-wpm { color:var(--gold); }
 .pod-2 .pod-wpm { color:var(--silver); }
 .pod-3 .pod-wpm { color:var(--bronze); }
 
-/* table */
 .lb-wrap { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
 .lb-head {
   display:grid; grid-template-columns:56px 1fr 150px 1fr 90px 90px;
@@ -339,7 +334,6 @@ h1 .hi { color:var(--cyan); }
 .empty-state { text-align:center; padding:56px; color:var(--text-dim); }
 .empty-icon  { font-size:2.8rem; margin-bottom:12px; }
 
-/* ══════════════════════════════ MODAL ══════════════════════════════ */
 .overlay {
   display:none; position:fixed; inset:0;
   background:rgba(7,9,15,.88); backdrop-filter:blur(6px);
@@ -356,7 +350,6 @@ h1 .hi { color:var(--cyan); }
 .modal-btns { display:flex; gap:10px; margin-top:18px; }
 .modal-pw-err { color:var(--danger); font-size:.82rem; margin-top:6px; display:none; }
 
-/* ══════════════════════════════ UTILS ══════════════════════════════ */
 .spin {
   display:inline-block; width:14px; height:14px;
   border:2px solid var(--border-bright); border-top-color:var(--cyan);
@@ -376,8 +369,30 @@ h1 .hi { color:var(--cyan); }
 </head>
 <body>
 
+<!-- ░░░░░░░░░░░░░░░ CLOSED LOCKDOWN SCREEN ░░░░░░░░░░░░░░░ -->
+<div id="closed-screen" class="screen">
+  <nav class="nav">
+    <div class="logo">IUB ACM SC <em>WPM</em></div>
+    <div class="nav-right">
+      <button class="btn btn-ghost" onclick="openAdminModal()">⚙ Admin Panel</button>
+    </div>
+  </nav>
+  <div style="flex:1; display:flex; align-items:center; justify-content:center; padding:20px; text-align:center;">
+    <div class="card" style="max-width:520px;">
+      <div style="font-size:3.5rem; margin-bottom:15px;">🔒</div>
+      <div class="card-title" style="font-size:1.6rem; color:var(--cyan); margin-bottom:12px;">Contest is Closed</div>
+      <p class="card-sub" style="line-height:1.7; margin-bottom:20px;">
+        This typing contest runs strictly from <strong>June 7 to June 11, 2026</strong>, daily between <strong>9:00 AM and 5:00 PM (Bangladesh Time)</strong>.
+      </p>
+      <div style="font-size:.8rem; background:rgba(99,179,237,0.05); border:1px solid var(--border); padding:12px; border-radius:8px; color:var(--text-dim);">
+        Student entry and score submissions are completely deactivated outside operational testing hours.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ░░░░░░░░░░░░░░░ HOME ░░░░░░░░░░░░░░░ -->
-<div id="home" class="screen active">
+<div id="home" class="screen">
   <nav class="nav">
     <div class="logo">IUB ACM SC <em>WPM</em></div>
     <div class="nav-right">
@@ -387,10 +402,9 @@ h1 .hi { color:var(--cyan); }
   <div class="hero-wrap" style="padding:60px 20px;">
     <div class="pill" id="contest-pill">Jun 7–11, 2026 &nbsp;·&nbsp; 9 AM – 5 PM Daily</div>
     <h1>Prove Your<br><span class="hi">Typing Speed</span></h1>
-    <p class="hero-p">Welcome to the booth of IUB ACM Student Chapter! Here you can participate in 1-minute typing contest just by entering your Name, IUB ID and IUB Email Address. Please note the followings:<br><br>
-- You can participate the contest once in a day. You are welcomed to try again on the next day, the best one will be counted by the end of this contest!<br>
-- The results will be published on by the end of this contest<br>
-- Top 3 ranking holders will be announced in our socials!<br><br>
+    <p class="hero-p">Welcome to the booth of IUB ACM Student Chapter! Here you can participate in a 1-minute typing contest just by entering your Name, IUB ID and IUB Email Address. Please note the following:<br><br>
+- You can participate in the contest <strong>once per day</strong>. You are welcome to try again on subsequent days; your best score will be counted!<br>
+- Top 3 rank holders will be announced on our socials by the end of the competition.<br><br>
 Good luck! Just do it!</p>
     <div class="stats-strip">
       <div class="stat-cell"><div class="stat-n">60s</div><div class="stat-l">Time Limit</div></div>
@@ -415,7 +429,7 @@ Good luck! Just do it!</p>
     <div class="card">
       <div class="card-head">
         <div class="card-title">Enter Your Details</div>
-        <div class="card-sub">Fill in your information before the test. Your score will be saved under these details.</div>
+        <div class="card-sub">Fill in your details before beginning. Note that you can only submit one score per day.</div>
       </div>
       <div class="field">
         <label class="field-label">Full Name</label>
@@ -424,15 +438,18 @@ Good luck! Just do it!</p>
       </div>
       <div class="field">
         <label class="field-label">Student ID</label>
-        <input class="field-input" id="inp-id" type="text" placeholder="e.g. 2021668" autocomplete="off">
+        <input class="field-input" id="inp-id" type="text" placeholder="e.g. 2221668" autocomplete="off">
         <div class="field-err" id="err-id">Please enter your student ID.</div>
       </div>
       <div class="field">
         <label class="field-label">IUB Email Address</label>
-        <input class="field-input" id="inp-email" type="email" placeholder="e.g. 2021668@iub.edu.bd" autocomplete="off">
+        <input class="field-input" id="inp-email" type="email" placeholder="e.g. 2221668@iub.edu.bd" autocomplete="off">
         <div class="field-err" id="err-email">Please enter a valid email.</div>
       </div>
-      <button class="btn btn-primary" style="width:100%;margin-top:10px;" onclick="proceedToTest()">Continue to Test →</button>
+      
+      <div class="field-gate-err" id="gate-err"></div>
+
+      <button class="btn btn-primary" id="btn-register-submit" style="width:100%;margin-top:10px;" onclick="proceedToTest()">Continue to Test →</button>
     </div>
   </div>
 </div>
@@ -454,17 +471,15 @@ Good luck! Just do it!</p>
       Contestant: <b id="tag-name">—</b>&nbsp;|&nbsp; ID: <b id="tag-id">—</b>
     </div>
     <div class="test-box">
-      <!-- START OVERLAY -->
       <div class="start-overlay" id="start-overlay">
         <div class="big-icon">⌨️</div>
         <h2>Ready to Type?</h2>
-        <p>Click the button below to start. The 60-second timer begins immediately. Type the given passage as fast and accurately as you can.</p>
+        <p>Click the button below to start. The randomized phrase will be generated dynamically, and your 60-second countdown begins instantly.</p>
         <button class="btn btn-primary" onclick="beginTest()">Start Test — 60 Seconds</button>
       </div>
-      <!-- TYPING ZONE -->
       <div id="typing-zone" style="display:none;">
         <div class="text-panel" id="text-panel"></div>
-        <textarea class="type-area" id="type-area" rows="3"
+        <textarea class="type-area" id="type-area" rows="4"
           placeholder="Click here and start typing…"
           spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
         <div class="type-hint">Type the passage above — focus on accuracy first, speed will follow.</div>
@@ -547,7 +562,43 @@ Good luck! Just do it!</p>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   CONTEST COUNTDOWN  (Jun 7–11, 2026 · 9 AM–5 PM Dhaka time)
+   🛡️ AIRTIGHT TIMING SYSTEM (Bangladesh Time Gate Rule Enforcement)
+   ═══════════════════════════════════════════════════════════════ */
+function isContestOpen() {
+  try {
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Dhaka',
+      year: 'numeric', month: 'numeric', day: 'numeric',
+      hour: 'numeric', hour12: false
+    });
+    const parts = formatter.formatToParts(now);
+    const map = Object.fromEntries(parts.map(p => [p.type, p.value]));
+    
+    const year = parseInt(map.year, 10);
+    const month = parseInt(map.month, 10); 
+    const day = parseInt(map.day, 10);
+    const hour = parseInt(map.hour, 10);
+    
+    if (year !== 2026 || month !== 6 || day < 7 || day > 11) return false;
+    if (hour < 9 || hour >= 17) return false;
+    
+    return true;
+  } catch (e) {
+    const now = new Date();
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const bdTime = new Date(utc + (3600000 * 6)); 
+    
+    if (bdTime.getFullYear() !== 2026) return false;
+    if (bdTime.getMonth() !== 5) return false; 
+    if (bdTime.getDate() < 7 || bdTime.getDate() > 11) return false;
+    if (bdTime.getHours() < 9 || bdTime.getHours() >= 17) return false;
+    return true;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTEST COUNTDOWN
    ═══════════════════════════════════════════════════════════════ */
 (function() {
   const START = new Date('2026-06-07T09:00:00+06:00');
@@ -573,32 +624,56 @@ Good luck! Just do it!</p>
 })();
 
 /* ═══════════════════════════════════════════════════════════════
-   ⚙️  CONFIGURATION  ← update these two values after setup
+   ⚙️ CONFIGURATION
    ═══════════════════════════════════════════════════════════════ */
 const CONFIG = {
-  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbysDJWvGuKLql5I1brSiN26yA3X0f7govTOlNi1fVmVJGoLZ4RNLEyrtaE9MBNRvCSY/exec',  // ← paste your deployed Apps Script URL
-  ADMIN_PW:   'fh69695',                  // ← change to your preferred password
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbysDJWvGuKLql5I1brSiN26yA3X0f7govTOlNi1fVmVJGoLZ4RNLEyrtaE9MBNRvCSY/exec',
+  ADMIN_PW:   'fh69695',
 };
 
-/* ═══════════════════════════════════════════════════════════════
-   PASSAGES  (randomised per attempt)
-   ═══════════════════════════════════════════════════════════════ */
-const PASSAGES = [
-  "The quick brown fox jumps over the lazy dog near the riverbank. Early morning sunlight filters through the tall oak trees as birds begin their daily chorus. A gentle breeze stirs the golden wheat fields stretching toward the distant mountains on the horizon.",
-  "Technology has transformed how we communicate and share information across the globe. Every day millions of people use smartphones and computers to connect with friends and access knowledge that was once found only in libraries or universities.",
-  "Reading books regularly is one of the best ways to expand your vocabulary and sharpen your mind. Great authors have the ability to transport readers to different places and times through the power of carefully chosen words and vivid descriptions.",
-  "Scientists around the world are working to solve pressing challenges facing humanity today. From renewable energy to medical breakthroughs their research has the potential to improve the quality of life for billions of people in the coming decades.",
-  "The history of human civilization is a story of curiosity progress and remarkable adaptation. From ancient stone tools to modern artificial intelligence people have always found creative ways to overcome obstacles and build a better future.",
-  "Music has the remarkable ability to evoke powerful emotions and unlock distant memories. Whether it is a classical symphony or a modern pop song the universal language of music connects people across all cultures ages and walks of life.",
-  "Exercise and physical activity are essential parts of a healthy and balanced lifestyle. Regular movement strengthens muscles improves heart health boosts mood and sharpens concentration helping people of all ages live longer more fulfilling lives.",
-  "The ocean covers more than seventy percent of the earth and is home to an astonishing variety of life. From microscopic plankton to the massive blue whale the sea contains some of the most fascinating creatures our planet has ever produced.",
-  "Effective communication is one of the most valuable skills a person can develop throughout their lifetime. Being able to express ideas clearly listen attentively and adapt your message to different audiences opens countless doors in both work and personal relationships.",
-  "Urban gardens and rooftop farms are becoming increasingly popular in cities around the world. These green spaces not only produce fresh food for local communities but also improve air quality reduce heat and provide peaceful retreats from the noise of city life.",
+/* 🛠️ FIX: ADD EXTENSIVE WORD BANK FOR EVERY RANDOMIZED RUN */
+const WORD_BANK = [
+  "technology", "computer", "science", "programming", "algorithm", "network", "database", "software", 
+  "hardware", "internet", "security", "intelligence", "graphics", "system", "interface", "development", 
+  "engineer", "coding", "digital", "process", "memory", "storage", "cloud", "application", "server", 
+  "client", "protocol", "encryption", "analytics", "automation", "robotics", "virtual", "reality", 
+  "platform", "framework", "language", "compiler", "variable", "function", "object", "class", 
+  "iteration", "recursion", "efficiency", "optimization", "structure", "design", "innovation", 
+  "creativity", "challenge", "solution", "discovery", "knowledge", "education", "university", "student", 
+  "chapter", "contest", "typing", "speed", "accuracy", "keyboard", "display", "monitor", "project", 
+  "collaboration", "teamwork", "success", "future", "progress", "history", "evolution", "impact", 
+  "society", "communication", "information", "global", "connection", "community", "resource", 
+  "opportunity", "experience", "learning", "growth", "ability", "skill", "practice", "focus", 
+  "concentration", "patience", "determination", "achievement", "independent", "complex", "logical",
+  "circuit", "framework", "terminal", "packet", "bandwidth", "processor", "architecture", "deployment"
 ];
 
-/* ═══════════════════════════════════════════════════════════════
-   STATE
-   ═══════════════════════════════════════════════════════════════ */
+function generateRandomPassage() {
+  let pool = [...WORD_BANK];
+  let words = [];
+  
+  // Choose 65 random words dynamically
+  for (let i = 0; i < 65; i++) {
+    const idx = Math.floor(Math.random() * pool.length);
+    words.push(pool[idx]);
+  }
+  
+  let punctuated = [];
+  for (let i = 0; i < words.length; i++) {
+    let w = words[i];
+    // Capitalize start of sentences
+    if (i === 0 || (i > 0 && punctuated[punctuated.length - 1].endsWith('.'))) {
+      w = w.charAt(0).toUpperCase() + w.slice(1);
+    }
+    // Add natural spacing and full-stops every 10-12 words
+    if (i > 0 && i % 11 === 0 && i < words.length - 1) {
+      w += ".";
+    }
+    punctuated.push(w);
+  }
+  return punctuated.join(" ") + ".";
+}
+
 let student  = {};
 let testData = { passage:'', startTime:null, timer:null, timeLeft:60, running:false, done:false, typed:'' };
 
@@ -606,43 +681,77 @@ let testData = { passage:'', startTime:null, timer:null, timeLeft:60, running:fa
    SCREEN ROUTER
    ═══════════════════════════════════════════════════════════════ */
 function showScreen(id) {
+  if (id !== 'admin' && id !== 'closed-screen' && !isContestOpen()) {
+    id = 'closed-screen';
+  }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
   window.scrollTo(0,0);
   if (id === 'admin') loadLeaderboard();
-  if (id === 'register' || id === 'home') {
+  if (id === 'register' || id === 'home' || id === 'closed-screen') {
     history.replaceState(null, '', id === 'register' ? '#register' : '#');
   }
 }
 
-/* Honour the URL hash on first load */
 (function() {
-  if (window.location.hash === '#register') {
+  if (!isContestOpen()) {
+    showScreen('closed-screen');
+  } else if (window.location.hash === '#register') {
     showScreen('register');
+  } else {
+    showScreen('home');
   }
 })();
 
-/* ═══════════════════════════════════════════════════════════════
-   REGISTER
-   ═══════════════════════════════════════════════════════════════ */
-function proceedToTest() {
+/* 🛠️ FIX: SAME-DAY GATE ENT_VALIDATION BEFORE THE TEST LOADS */
+async function proceedToTest() {
   const name  = document.getElementById('inp-name').value.trim();
   const id    = document.getElementById('inp-id').value.trim();
   const email = document.getElementById('inp-email').value.trim();
+  
   let ok = true;
   ['name','id','email'].forEach(k => document.getElementById('err-'+k).style.display='none');
+  document.getElementById('gate-err').style.display = 'none';
+
   if (!name)                { document.getElementById('err-name').style.display='block';  ok=false; }
   if (!id)                  { document.getElementById('err-id').style.display='block';    ok=false; }
   if (!email||!email.includes('@')) { document.getElementById('err-email').style.display='block'; ok=false; }
   if (!ok) return;
 
+  const btn = document.getElementById('btn-register-submit');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<span class="spin"></span> Checking Eligibility...';
+  btn.disabled = true;
+
+  try {
+    const checkUrl = `${CONFIG.SCRIPT_URL}?action=check&studentId=${encodeURIComponent(id)}&email=${encodeURIComponent(email)}`;
+    const response = await fetch(checkUrl, { redirect: 'follow' });
+    const checkResult = await response.json();
+
+    if (!checkResult.allowed) {
+      const errBox = document.getElementById('gate-err');
+      errBox.innerHTML = `⚠️ <strong>Access Denied:</strong> ${checkResult.reason}`;
+      errBox.style.display = 'block';
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+      return;
+    }
+  } catch (err) {
+    console.warn("Same-day lock checking bypassed due to local network warning:", err);
+  }
+
+  btn.innerHTML = originalText;
+  btn.disabled = false;
+
   student = { name, id, email };
   document.getElementById('tag-name').textContent = name;
   document.getElementById('tag-id').textContent   = id;
 
-  /* reset test */
-  const passage = PASSAGES[Math.floor(Math.random()*PASSAGES.length)];
+  // 🛠️ FIX: ASSIGN COMPLETELY RANDOM PHRASE RUN AT TIME OF PREPARATION
+  const passage = generateRandomPassage();
   testData = { passage, startTime:null, timer:null, timeLeft:60, running:false, done:false, typed:'' };
+  
   document.getElementById('timer').textContent = '1:00';
   document.getElementById('timer').classList.remove('hot');
   document.getElementById('live-wpm').textContent = '0';
@@ -655,9 +764,6 @@ function proceedToTest() {
   showScreen('test');
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   TYPING TEST
-   ═══════════════════════════════════════════════════════════════ */
 function beginTest() {
   document.getElementById('start-overlay').style.display = 'none';
   document.getElementById('typing-zone').style.display   = 'block';
@@ -696,13 +802,14 @@ function onType(e) {
   document.getElementById('live-acc').textContent = acc+'%';
 }
 
+/* 🛠️ FIX FOR IMAGE_9AF89D.JPG: USE PURE STANDARD REWRAPPING SPACES INSPAN GENERATION */
 function renderPassage(typed, passage) {
   let html = '';
   for (let i=0;i<passage.length;i++) {
-    const ch = passage[i]===' ' ? '&nbsp;' : escCh(passage[i]);
+    const ch = passage[i]===' ' ? ' ' : escCh(passage[i]);
     if (i < typed.length) {
       if (typed[i]===passage[i]) html += `<span class="c-done">${ch}</span>`;
-      else html += `<span class="c-wrong">${passage[i]===' '?'&nbsp;':escCh(passage[i])}</span>`;
+      else html += `<span class="c-wrong">${ch}</span>`;
     } else if (i===typed.length) {
       html += `<span class="c-cursor c-wait">${ch}</span>`;
     } else {
@@ -722,17 +829,15 @@ function endTest() {
   clearInterval(testData.timer);
   document.getElementById('type-area').disabled = true;
 
-  /* final WPM: count correctly typed words */
   const typed   = testData.typed;
   const passage = testData.passage;
   const words   = typed.trim().split(/\s+/).filter(Boolean).length;
-  const wpm     = words; // exactly 1 minute
+  const wpm     = words;
 
   let corr = 0;
   for (let i=0;i<typed.length;i++) if (i<passage.length && typed[i]===passage[i]) corr++;
   const accuracy = typed.length>0 ? Math.round((corr/typed.length)*100) : 0;
 
-  /* rating emoji */
   const icon = wpm>=80?'🚀':wpm>=60?'⚡':wpm>=40?'🎯':'✍️';
   document.getElementById('res-icon').textContent = icon;
   document.getElementById('res-wpm').textContent  = wpm;
@@ -743,9 +848,6 @@ function endTest() {
   saveResult(wpm, accuracy);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   GOOGLE SHEETS — SAVE
-   ═══════════════════════════════════════════════════════════════ */
 async function saveResult(wpm, accuracy) {
   const box = document.getElementById('save-status');
   box.className = 'status-box load';
@@ -757,18 +859,8 @@ async function saveResult(wpm, accuracy) {
     email:     student.email,
     wpm:       wpm,
     accuracy:  accuracy,
-    day:       new Date().toLocaleDateString('en-BD', { timeZone:'Asia/Dhaka' }),
     timestamp: new Date().toISOString(),
   };
-
-  /* DEMO MODE */
-  if (CONFIG.SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
-    setTimeout(()=>{
-      box.className = 'status-box ok';
-      box.textContent = '✓ Demo mode — connect Google Sheets to save permanently.';
-    }, 1000);
-    return;
-  }
 
   try {
     await fetch(CONFIG.SCRIPT_URL, {
@@ -778,35 +870,18 @@ async function saveResult(wpm, accuracy) {
       body:   JSON.stringify(payload),
     });
     box.className = 'status-box ok';
-    box.textContent = '✓ Score saved! Check the leaderboard to see your rank.';
+    box.textContent = '✓ Score saved securely! Check the leaderboard to see your standing.';
   } catch(err) {
     box.className = 'status-box err';
-    box.textContent = '✗ Could not save score — please check your internet connection.';
+    box.textContent = '✗ Could not save score — please verify network connection.';
     console.error(err);
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   GOOGLE SHEETS — LOAD LEADERBOARD
-   ═══════════════════════════════════════════════════════════════ */
 async function loadLeaderboard() {
   document.getElementById('lb-body').innerHTML =
     '<div class="empty-state"><span class="spin"></span> Loading results…</div>';
   document.getElementById('podium-wrap').innerHTML = '';
-
-  /* DEMO MODE */
-  if (CONFIG.SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
-    const demo = [
-      { name:'Rahim Uddin',    studentId:'CSE-2401001', email:'rahim@uni.edu',    wpm:89, accuracy:98 },
-      { name:'Ayesha Begum',   studentId:'CSE-2401042', email:'ayesha@uni.edu',   wpm:76, accuracy:96 },
-      { name:'Karim Khan',     studentId:'EEE-2401015', email:'karim@uni.edu',    wpm:71, accuracy:93 },
-      { name:'Fatema Ali',     studentId:'CSE-2401088', email:'fatema@uni.edu',   wpm:65, accuracy:91 },
-      { name:'Hasan Mahmud',   studentId:'BBA-2401007', email:'hasan@uni.edu',    wpm:58, accuracy:95 },
-      { name:'Nadia Islam',    studentId:'CSE-2401033', email:'nadia@uni.edu',    wpm:54, accuracy:89 },
-    ];
-    renderLeaderboard(demo);
-    return;
-  }
 
   try {
     const res  = await fetch(CONFIG.SCRIPT_URL + '?action=get', { redirect:'follow' });
@@ -828,7 +903,6 @@ function renderLeaderboard(data) {
     return;
   }
 
-  /* Podium */
   const medals = ['🥇','🥈','🥉'];
   const cls    = ['pod-1','pod-2','pod-3'];
   let podHTML  = '<div class="podium">';
@@ -845,7 +919,6 @@ function renderLeaderboard(data) {
   podHTML += '</div>';
   document.getElementById('podium-wrap').innerHTML = podHTML;
 
-  /* Table */
   let rows = '';
   data.forEach((s,i) => {
     rows += `<div class="lb-row r${i+1}">
@@ -861,16 +934,9 @@ function renderLeaderboard(data) {
 }
 
 function escHtml(s) {
-  return String(s)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   ADMIN MODAL
-   ═══════════════════════════════════════════════════════════════ */
 function openAdminModal() {
   document.getElementById('admin-overlay').classList.add('on');
   document.getElementById('admin-pw').value = '';
