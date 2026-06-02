@@ -125,9 +125,36 @@ h1 span { color:var(--cyan); }
 @keyframes fadeUp { from { opacity:0; transform:translateY(15px); } to { opacity:1; transform:translateY(0); } }
 .spin { display:inline-block; width:16px; height:16px; border:2px solid rgba(255,255,255,.1); border-top-color:var(--cyan); border-radius:50%; animation:spin .6s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 </style>
 </head>
 <body>
+
+<!-- ═══════ TIME GATE SCREEN ═══════ -->
+<div id="inactive" class="screen" style="align-items:center; justify-content:center; min-height:100vh;">
+  <div style="text-align:center; max-width:580px; padding:40px 28px; animation: fadeUp .6s ease both;">
+    <div style="font-size:3.5rem; margin-bottom:20px;">⏳</div>
+    <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(252,92,125,0.1); border:1px solid rgba(252,92,125,0.3); color:var(--danger); padding:5px 18px; border-radius:100px; font-size:.72rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:22px;">
+      <span style="width:7px;height:7px;background:var(--danger);border-radius:50%;display:inline-block;animation:pulse 1.4s ease infinite;"></span>
+      Contest Inactive
+    </div>
+    <h2 style="font-family:'Orbitron'; font-size:clamp(1.6rem,4vw,2.4rem); font-weight:900; line-height:1.2; margin-bottom:18px; color:var(--text);">
+      Come Back<br><span style="color:var(--cyan);">During Contest Hours</span>
+    </h2>
+    <p style="color:var(--text-dim); font-size:1rem; line-height:1.75; margin-bottom:28px;">
+      The <strong style="color:var(--text);">IUB ACM SC Typing Contest</strong> is not currently open.<br>
+      We are live every day from <strong style="color:var(--cyan);">9 AM – 5 PM BST</strong>,<br>
+      from <strong style="color:var(--cyan);">June 7 – 11, 2026</strong>. See you then!
+    </p>
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:22px 28px; margin-bottom:28px; display:inline-block;">
+      <div style="font-size:.7rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Bangladesh Standard Time (BST · UTC+6)</div>
+      <div id="gate-clock" style="font-family:'Orbitron'; font-size:1.8rem; font-weight:900; color:var(--cyan); letter-spacing:3px;">--:--:--</div>
+      <div id="gate-date" style="font-size:.82rem; color:var(--text-dim); margin-top:6px;"></div>
+    </div>
+    <br>
+    <button class="btn btn-ghost" onclick="openAdminModal()" style="font-size:.78rem;">⚙ Admin Access</button>
+  </div>
+</div>
 
 <div id="home" class="screen active">
   <nav class="nav" style="width: 100%;">
@@ -349,7 +376,7 @@ h1 span { color:var(--cyan); }
 <script>
 const CONFIG = {
   SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbw1EbivssQpMle5Y5lR5zNFR9OWpliAWW5XTTIFjQmjafAsexP7MoQEjmRWso70ikPF/exec',
-  ADMIN_PW: 'acmsc6969'
+  ADMIN_PW: 'admin1234'
 };
 
 let userContext = { name:'', studentId:'', email:'' };
@@ -423,8 +450,80 @@ function switchAdminTab(tab) {
 
 // Automatically load rankings on initial visit
 window.addEventListener('DOMContentLoaded', () => {
+  checkTimeGate();
+  setInterval(checkTimeGate, 30000); // re-check every 30 seconds
+  startGateClock();
   fetchPublicLeaderboard();
 });
+
+/* ═══════════════════════════════════════════════════════════════
+   TIME GATE — Bangladesh Standard Time (UTC+6)
+   Active: June 7–11, 2026, 09:00–17:00 BST daily
+   ═══════════════════════════════════════════════════════════════ */
+function getBSTTime() {
+  // Always compute current time in UTC+6 regardless of visitor's local timezone
+  const now = new Date();
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  return new Date(utc + 6 * 3600000);
+}
+
+function isContestActive() {
+  const bst = getBSTTime();
+  const day   = bst.getDay();   // 0=Sun,1=Mon,...,6=Sat
+  const date  = bst.getDate();
+  const month = bst.getMonth(); // 0-indexed, so 5=June
+  const year  = bst.getFullYear();
+  const hour  = bst.getHours();
+  const min   = bst.getMinutes();
+
+  // Must be June 7–11, 2026
+  const validDate = year === 2026 && month === 5 && date >= 7 && date <= 11;
+  // Must be Mon–Fri (days 1–5) — June 7 is Sunday so days are Sun(7),Mon(8),Tue(9),Wed(10),Thu(11)
+  // June 7=Sun(0), 8=Mon(1), 9=Tue(2), 10=Wed(3), 11=Thu(4) — all valid
+  // Must be between 09:00 and 16:59 BST (9 AM to strictly before 5 PM)
+  const activeHour = hour >= 9 && hour < 17;
+
+  return validDate && activeHour;
+}
+
+function checkTimeGate() {
+  const active = isContestActive();
+  const homeEl     = document.getElementById('home');
+  const inactiveEl = document.getElementById('inactive');
+
+  if (active) {
+    // Contest is live — show home, hide gate
+    if (inactiveEl.classList.contains('active')) {
+      inactiveEl.classList.remove('active');
+      homeEl.classList.add('active');
+    }
+  } else {
+    // Outside hours — show gate, hide everything except admin
+    const currentScreen = document.querySelector('.screen.active');
+    const onAdmin = currentScreen && currentScreen.id === 'admin';
+    if (!onAdmin) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      inactiveEl.classList.add('active');
+    }
+  }
+}
+
+function startGateClock() {
+  function tick() {
+    const bst = getBSTTime();
+    const hh  = String(bst.getHours()).padStart(2,'0');
+    const mm  = String(bst.getMinutes()).padStart(2,'0');
+    const ss  = String(bst.getSeconds()).padStart(2,'0');
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const clockEl = document.getElementById('gate-clock');
+    const dateEl  = document.getElementById('gate-date');
+    if (clockEl) clockEl.textContent = `${hh}:${mm}:${ss}`;
+    if (dateEl)  dateEl.textContent  = `${days[bst.getDay()]}, ${bst.getDate()} ${months[bst.getMonth()]} ${bst.getFullYear()}`;
+  }
+  tick();
+  setInterval(tick, 1000);
+}
 
 /* ═══════════════════════════════════════════════════════════════
    PUBLIC LEADERBOARD GENERATION ENGINE
