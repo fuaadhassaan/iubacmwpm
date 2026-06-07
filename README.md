@@ -1,9 +1,9 @@
-Information
+**Important Information**
 
-Links: https://iubacmwpm.vercel.app/
+**Vercel Link:** https://iubacmwpm.vercel.app/
 
-https://fuaadhassaan.github.io/iubacmwpm/
+**Github Link:** https://fuaadhassaan.github.io/iubacmwpm/
 
-Vercel main: https://vercel.com/fuaadhassaan-5350s-projects/iubacmwpm
+**Vercel main:** https://vercel.com/fuaadhassaan-5350s-projects/iubacmwpm
 
-Github main: https://github.com/fuaadhassaan/iubacmwpm
+**Github main:** https://github.com/fuaadhassaan/iubacmwpm
