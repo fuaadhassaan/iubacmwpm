@@ -144,7 +144,7 @@ h1 span { color:var(--cyan); }
     <p style="color:var(--text-dim); font-size:1rem; line-height:1.75; margin-bottom:28px;">
       The <strong style="color:var(--text);">IUB ACM SC Typing Contest</strong> is not currently open.<br>
       We are live every day from <strong style="color:var(--cyan);">9 AM – 5 PM BST</strong>,<br>
-      from <strong style="color:var(--cyan);">June 7 – 11, 2026</strong>. See you then!
+      from <strong style="color:var(--cyan);">June 14 – 18, 2026</strong>. See you then!
     </p>
     <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:22px 28px; margin-bottom:28px; display:inline-block;">
       <div style="font-size:.7rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Bangladesh Standard Time (BST · UTC+6)</div>
@@ -165,7 +165,7 @@ h1 span { color:var(--cyan); }
   <div class="hero-wrap">
     <div class="pill">
       <span style="width:7px;height:7px;background:var(--cyan);border-radius:50%;display:inline-block;flex-shrink:0;"></span>
-      JUN 7–11, 2026 &nbsp;·&nbsp; 9 AM – 5 PM DAILY
+      JUN 14–18, 2026 &nbsp;·&nbsp; 9 AM – 5 PM DAILY
     </div>
     <h1>Prove Your<br><span>Typing Speed</span></h1>
     <p style="color:var(--text); font-size:.97rem; line-height:1.7; margin-bottom:14px;">
@@ -458,7 +458,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 /* ═══════════════════════════════════════════════════════════════
    TIME GATE — Bangladesh Standard Time (UTC+6)
-   Active: June 7–11, 2026, 09:00–17:00 BST daily
+   Active: June 14–18, 2026, 09:00–17:00 BST daily
    ═══════════════════════════════════════════════════════════════ */
 function getBSTTime() {
   // Always compute current time in UTC+6 regardless of visitor's local timezone
@@ -476,11 +476,10 @@ function isContestActive() {
   const hour  = bst.getHours();
   const min   = bst.getMinutes();
 
-  // Must be June 7–11, 2026
-  const validDate = year === 2026 && month === 5 && date >= 7 && date <= 11;
-  // Must be Mon–Fri (days 1–5) — June 7 is Sunday so days are Sun(7),Mon(8),Tue(9),Wed(10),Thu(11)
-  // June 7=Sun(0), 8=Mon(1), 9=Tue(2), 10=Wed(3), 11=Thu(4) — all valid
+  // Must be June 14–18, 2026
+  const validDate = year === 2026 && month === 5 && date >= 14 && date <= 18;
   // Must be between 09:00 and 16:59 BST (9 AM to strictly before 5 PM)
+  // June 14=Sat(6), 15=Sun(0), 16=Mon(1), 17=Tue(2), 18=Wed(3) — all valid
   const activeHour = hour >= 9 && hour < 17;
 
   return validDate && activeHour;
