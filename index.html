@@ -159,7 +159,13 @@ h1 span { color:var(--cyan); }
 <div id="home" class="screen active">
   <nav class="nav" style="width: 100%;">
     <div class="logo">IUB ACM SC <em>WPM</em></div>
-    <button class="btn btn-ghost" onclick="openAdminModal()">⚙ Admin Dashboard</button>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div style="text-align:right; line-height:1.2;">
+        <div style="font-family:'Orbitron'; font-size:.95rem; font-weight:700; color:var(--cyan); letter-spacing:2px;" id="home-clock">--:--:--</div>
+        <div style="font-size:.65rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px;">BST · UTC+6</div>
+      </div>
+      <button class="btn btn-ghost" onclick="openAdminModal()">⚙ Admin Dashboard</button>
+    </div>
   </nav>
   
   <div class="hero-wrap">
@@ -330,7 +336,7 @@ h1 span { color:var(--cyan); }
     <h3 style="font-family:'Orbitron'; margin-bottom:10px;">Elevated Access</h3>
     <p style="color:var(--text-dim); font-size:.85rem; margin-bottom:20px;">Provide master pass-token to allow sheet modifications.</p>
     <div class="field">
-      <input class="field-input" type="password" id="acmsc6969" placeholder="••••••••">
+      <input class="field-input" type="password" id="admin-pw" placeholder="••••••••">
       <div class="field-err" id="pw-err">Authentication failure.</div>
     </div>
     <div style="display:flex; gap:10px; margin-top:20px;">
@@ -376,7 +382,7 @@ h1 span { color:var(--cyan); }
 <script>
 const CONFIG = {
   SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbw1EbivssQpMle5Y5lR5zNFR9OWpliAWW5XTTIFjQmjafAsexP7MoQEjmRWso70ikPF/exec',
-  ADMIN_PW: 'acmsc6969'
+  ADMIN_PW: 'acmscsum2669'
 };
 
 let userContext = { name:'', studentId:'', email:'' };
@@ -451,7 +457,6 @@ function switchAdminTab(tab) {
 // Automatically load rankings on initial visit
 window.addEventListener('DOMContentLoaded', () => {
   checkTimeGate();
-  setInterval(checkTimeGate, 30000); // re-check every 30 seconds
   startGateClock();
   fetchPublicLeaderboard();
 });
@@ -486,24 +491,12 @@ function isContestActive() {
 }
 
 function checkTimeGate() {
-  const active = isContestActive();
+  // Contest is permanently open — time gate disabled
   const homeEl     = document.getElementById('home');
   const inactiveEl = document.getElementById('inactive');
-
-  if (active) {
-    // Contest is live — show home, hide gate
-    if (inactiveEl.classList.contains('active')) {
-      inactiveEl.classList.remove('active');
-      homeEl.classList.add('active');
-    }
-  } else {
-    // Outside hours — show gate, hide everything except admin
-    const currentScreen = document.querySelector('.screen.active');
-    const onAdmin = currentScreen && currentScreen.id === 'admin';
-    if (!onAdmin) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      inactiveEl.classList.add('active');
-    }
+  if (inactiveEl.classList.contains('active')) {
+    inactiveEl.classList.remove('active');
+    homeEl.classList.add('active');
   }
 }
 
@@ -515,10 +508,14 @@ function startGateClock() {
     const ss  = String(bst.getSeconds()).padStart(2,'0');
     const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const timeStr = `${hh}:${mm}:${ss}`;
+    const dateStr = `${days[bst.getDay()]}, ${bst.getDate()} ${months[bst.getMonth()]} ${bst.getFullYear()}`;
     const clockEl = document.getElementById('gate-clock');
     const dateEl  = document.getElementById('gate-date');
-    if (clockEl) clockEl.textContent = `${hh}:${mm}:${ss}`;
-    if (dateEl)  dateEl.textContent  = `${days[bst.getDay()]}, ${bst.getDate()} ${months[bst.getMonth()]} ${bst.getFullYear()}`;
+    const homeClockEl = document.getElementById('home-clock');
+    if (clockEl) clockEl.textContent = timeStr;
+    if (dateEl)  dateEl.textContent  = dateStr;
+    if (homeClockEl) homeClockEl.textContent = timeStr;
   }
   tick();
   setInterval(tick, 1000);
