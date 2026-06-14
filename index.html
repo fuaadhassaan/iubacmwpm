@@ -86,7 +86,6 @@ h1 span { color:var(--cyan); }
   height: 150px; overflow: hidden; position: relative; user-select: none; 
   white-space: pre-wrap; word-break: break-word;
 }
-/* fade-out mask so text smoothly disappears at bottom instead of hard-clipping */
 .text-panel::after {
   content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 48px;
   background: linear-gradient(transparent, var(--surface));
@@ -130,7 +129,7 @@ h1 span { color:var(--cyan); }
 </head>
 <body>
 
-<!-- ═══════ TIME GATE SCREEN ═══════ -->
+<!-- TIME GATE SCREEN -->
 <div id="inactive" class="screen" style="align-items:center; justify-content:center; min-height:100vh;">
   <div style="text-align:center; max-width:580px; padding:40px 28px; animation: fadeUp .6s ease both;">
     <div style="font-size:3.5rem; margin-bottom:20px;">⏳</div>
@@ -182,7 +181,7 @@ h1 span { color:var(--cyan); }
     <ul style="list-style:none; color:var(--text-dim); font-size:.9rem; line-height:1.75; margin-bottom:16px; text-align:left; display:inline-block;">
       <li style="margin-bottom:4px;">— You can participate the contest <strong style="color:var(--text);">once in a day.</strong> You are welcomed to try again on the next day, the best one will be counted by the end of this contest!</li>
       <li style="margin-bottom:4px;">— The results will be published by the <strong style="color:var(--text);">end of this contest.</strong></li>
-      <li>— <strong style="color:var(--text);">Top 3 ranking holders</strong> will be announced on our socials!</li>
+      <li>— <strong style="color:var(--text);">Top 3 ranking holders</strong> will be announced on our socials and orientation!</li>
     </ul>
     <p style="color:var(--text-dim); font-size:.9rem; margin-bottom:20px; font-style:italic;">Good luck! Just do it!</p>
     <div>
@@ -284,13 +283,11 @@ h1 span { color:var(--cyan); }
     </div>
   </nav>
   <div class="admin-content">
-    <!-- Tab Bar -->
     <div style="display:flex; gap:0; margin-bottom:24px; border:1px solid var(--border); border-radius:10px; overflow:hidden; width:fit-content;">
       <button id="tab-sheet" class="btn" style="padding:10px 22px; border-radius:0; background:var(--cyan); color:#07090f; font-family:'Orbitron'; font-size:.72rem; letter-spacing:1px; font-weight:700;" onclick="switchAdminTab('sheet')">📋 Sheet Records</button>
       <button id="tab-board" class="btn btn-ghost" style="padding:10px 22px; border-radius:0; border:none; font-family:'Orbitron'; font-size:.72rem; letter-spacing:1px;" onclick="switchAdminTab('board')">🏆 Leaderboard CRUD</button>
     </div>
 
-    <!-- Sheet Records Tab -->
     <div id="admin-tab-sheet">
       <div class="admin-bar">
         <div>
@@ -310,7 +307,6 @@ h1 span { color:var(--cyan); }
       </div>
     </div>
 
-    <!-- Leaderboard CRUD Tab -->
     <div id="admin-tab-board" style="display:none;">
       <div class="admin-bar">
         <div>
@@ -386,6 +382,7 @@ const CONFIG = {
 };
 
 let userContext = { name:'', studentId:'', email:'' };
+
 const TEXT_POOL = [
   "The digital revolution has transformed how computing communities interact across borders. Competitive programming matches logic with extreme speed, pushing parameters beyond simple comprehension. Aspiring network engineers must master syntax structure, algorithm orchestration, and system optimization frameworks daily.",
   "Artificial intelligence continues to reshape industries at an unprecedented pace. Machine learning models require massive datasets and careful tuning to produce reliable results. Engineers who understand both theory and practical implementation will lead the next generation of technological breakthroughs.",
@@ -396,10 +393,24 @@ const TEXT_POOL = [
   "Cloud computing has democratized access to powerful infrastructure for startups and enterprises alike. Scalable virtual machines and serverless functions allow developers to deploy applications globally in minutes. Managing costs and latency requires careful architectural decisions at every stage of development.",
   "Open source collaboration has produced some of the most impactful software tools in modern history. Developers around the world contribute code, report bugs, and improve documentation freely. This model accelerates innovation and ensures that high-quality tools remain accessible to everyone."
 ];
-let testText = TEXT_POOL[0];
+
+/* ═══════════════════════════════════════════════════════════════
+   ENDLESS TEXT ENGINE
+   Builds a long continuous string by shuffling & concatenating
+   passages so the test never runs out of text within 60 seconds.
+   ═══════════════════════════════════════════════════════════════ */
+function buildEndlessText() {
+  // Shuffle a copy of the pool
+  const shuffled = [...TEXT_POOL].sort(() => Math.random() - 0.5);
+  // Join with a single space — enough for ~3–4 minutes of typing at 100 WPM
+  return shuffled.join(' ');
+}
+
+let testText = '';
 let characterArray = [];
 let currentIndex = 0;
-let errorsCount = 0;
+let totalTyped = 0;      // total keystrokes attempted (for accuracy across backspaces)
+let totalErrors = 0;     // cumulative error count
 let startTime = null;
 let countdownTimer = null;
 const duration = 60;
@@ -413,27 +424,21 @@ function showScreen(id) {
   }
   if (id === 'home') fetchPublicLeaderboard();
   if (id === 'test') {
-    // Pick a fresh random passage every time a student enters the test
-    testText = TEXT_POOL[Math.floor(Math.random() * TEXT_POOL.length)];
-    // Reset start button visibility in case it was hidden in a previous run
+    testText = buildEndlessText();
     const startBtn = document.getElementById('start-btn');
     startBtn.style.display = 'inline-flex';
     startBtn.disabled = false;
     startBtn.textContent = 'Unlock Keyboard';
-    // Reset textarea
     const ta = document.getElementById('type-area');
     ta.disabled = true;
     ta.value = '';
-    // Clear the text panel
     document.getElementById('text-scroller').innerHTML = '';
     document.getElementById('text-scroller').style.top = '24px';
-    // Reset stats display
     document.getElementById('live-wpm').textContent = '0';
     document.getElementById('live-acc').textContent = '100%';
     document.getElementById('live-timer').textContent = duration;
-    // Stop any lingering timer
     clearInterval(countdownTimer);
-    currentIndex = 0; errorsCount = 0; startTime = null;
+    currentIndex = 0; totalTyped = 0; totalErrors = 0; startTime = null;
   }
 }
 
@@ -441,7 +446,6 @@ function switchAdminTab(tab) {
   const isSheet = tab === 'sheet';
   document.getElementById('admin-tab-sheet').style.display = isSheet ? 'block' : 'none';
   document.getElementById('admin-tab-board').style.display = isSheet ? 'none' : 'block';
-
   const tabSheet = document.getElementById('tab-sheet');
   const tabBoard = document.getElementById('tab-board');
   if (isSheet) {
@@ -454,7 +458,6 @@ function switchAdminTab(tab) {
   }
 }
 
-// Automatically load rankings on initial visit
 window.addEventListener('DOMContentLoaded', () => {
   checkTimeGate();
   startGateClock();
@@ -462,11 +465,9 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ═══════════════════════════════════════════════════════════════
-   TIME GATE — Bangladesh Standard Time (UTC+6)
-   Active: June 14–18, 2026, 09:00–17:00 BST daily
+   TIME GATE
    ═══════════════════════════════════════════════════════════════ */
 function getBSTTime() {
-  // Always compute current time in UTC+6 regardless of visitor's local timezone
   const now = new Date();
   const utc = now.getTime() + now.getTimezoneOffset() * 60000;
   return new Date(utc + 6 * 3600000);
@@ -474,24 +475,16 @@ function getBSTTime() {
 
 function isContestActive() {
   const bst = getBSTTime();
-  const day   = bst.getDay();   // 0=Sun,1=Mon,...,6=Sat
   const date  = bst.getDate();
-  const month = bst.getMonth(); // 0-indexed, so 5=June
+  const month = bst.getMonth();
   const year  = bst.getFullYear();
   const hour  = bst.getHours();
-  const min   = bst.getMinutes();
-
-  // Must be June 14–18, 2026
   const validDate = year === 2026 && month === 5 && date >= 14 && date <= 18;
-  // Must be between 09:00 and 16:59 BST (9 AM to strictly before 5 PM)
-  // June 14=Sat(6), 15=Sun(0), 16=Mon(1), 17=Tue(2), 18=Wed(3) — all valid
   const activeHour = hour >= 9 && hour < 17;
-
   return validDate && activeHour;
 }
 
 function checkTimeGate() {
-  // Contest is permanently open — time gate disabled
   const homeEl     = document.getElementById('home');
   const inactiveEl = document.getElementById('inactive');
   if (inactiveEl.classList.contains('active')) {
@@ -522,7 +515,9 @@ function startGateClock() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   PUBLIC LEADERBOARD GENERATION ENGINE
+   PUBLIC LEADERBOARD
+   Ranked by WPM desc, then accuracy desc as tiebreaker.
+   Only entries with accuracy >= 75% are shown.
    ═══════════════════════════════════════════════════════════════ */
 async function fetchPublicLeaderboard() {
   const container = document.getElementById('public-leaderboard');
@@ -530,17 +525,48 @@ async function fetchPublicLeaderboard() {
     const res = await fetch(CONFIG.SCRIPT_URL);
     const payload = await res.json();
     
-    if(!payload.success || !payload.data || payload.data.length === 0) {
+    if (!payload.success || !payload.data || payload.data.length === 0) {
       container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-dim);">No active scores logged yet. Be the first!</div>';
       return;
     }
-    
+
+    // Compute best-per-student score (highest WPM first, accuracy as tiebreaker)
+    const bestMap = {};
+    payload.data.forEach(row => {
+      const key = String(row.studentId).trim().toLowerCase();
+      const wpm = Number(row.wpm);
+      const acc = Number(row.accuracy);
+      if (!bestMap[key]) {
+        bestMap[key] = { ...row };
+      } else {
+        const existing = bestMap[key];
+        // Keep higher WPM; if equal WPM, keep higher accuracy
+        if (wpm > existing.wpm || (wpm === existing.wpm && acc > existing.accuracy)) {
+          bestMap[key] = { ...row };
+        }
+      }
+    });
+
+    // Sort: WPM desc, accuracy desc as tiebreaker. Filter low accuracy.
+    const MIN_ACCURACY = 75;
+    const sorted = Object.values(bestMap)
+      .filter(r => Number(r.accuracy) >= MIN_ACCURACY)
+      .sort((a, b) => {
+        if (b.wpm !== a.wpm) return b.wpm - a.wpm;
+        return b.accuracy - a.accuracy;
+      });
+
+    if (sorted.length === 0) {
+      container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-dim);">No qualifying scores yet. Aim for accuracy above 75%!</div>';
+      return;
+    }
+
+    const top10 = sorted.slice(0, 10);
     let html = '';
-    const top10 = payload.data.slice(0, 10);
     top10.forEach((student, index) => {
       const rank = index + 1;
       let badgeStyle = `<span class="rank-badge">${rank}</span>`;
-      if(rank <= 3) badgeStyle = `<span class="rank-badge rank-${rank}">${rank}</span>`;
+      if (rank <= 3) badgeStyle = `<span class="rank-badge rank-${rank}">${rank}</span>`;
       
       html += `
       <div class="pub-lb-row">
@@ -572,7 +598,6 @@ async function validateAndProceed() {
 
   if (!name || !id || !email) return;
 
-  // Client-side same-day guard (fast, no network round-trip needed)
   const todayKey = `submitted_${id.trim().toLowerCase()}_${new Date().toISOString().slice(0,10)}`;
   if (localStorage.getItem(todayKey)) {
     document.getElementById('gate-err').textContent = "⛔ Access Denied: You have already submitted a typing speed run today. Please come back tomorrow!";
@@ -606,7 +631,9 @@ async function validateAndProceed() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   TYPING ENGINE + SMOOTH VIEWPORT SCROLL REPAIR
+   TYPING ENGINE
+   FIX 1 — Backspace: intercept keydown and move cursor back
+   FIX 2 — Endless: text pool is long enough to never finish
    ═══════════════════════════════════════════════════════════════ */
 function primeTypingArena() {
   document.getElementById('start-btn').style.display = 'none';
@@ -615,7 +642,8 @@ function primeTypingArena() {
   ta.value = '';
   
   currentIndex = 0;
-  errorsCount = 0;
+  totalTyped = 0;
+  totalErrors = 0;
   startTime = null;
   
   document.getElementById('live-wpm').textContent = '0';
@@ -647,10 +675,9 @@ function renderCharacters() {
   
   const cursorSpan = scroller.querySelector('.c-cursor');
   if (cursorSpan) {
-    const panelPad = 24; // matches left/top padding
+    const panelPad = 24;
     const panelH = panel.clientHeight - panelPad * 2;
     const cursorTop = cursorSpan.offsetTop;
-    // Start scrolling once cursor passes halfway point of visible area
     if (cursorTop > panelH * 0.45) {
       scroller.style.top = `${panelPad - (cursorTop - panelH * 0.35)}px`;
     } else {
@@ -659,6 +686,20 @@ function renderCharacters() {
   }
 }
 
+/* ── Backspace handler (keydown, before input fires) ── */
+document.getElementById('type-area').addEventListener('keydown', (e) => {
+  if (e.key === 'Backspace') {
+    e.preventDefault(); // stop the textarea from consuming the character
+    if (currentIndex <= 0) return;
+    currentIndex--;
+    // Revert the character state back to waiting
+    characterArray[currentIndex].state = 'wait';
+    renderCharacters();
+    updateLiveStats();
+  }
+});
+
+/* ── Regular character input ── */
 document.getElementById('type-area').addEventListener('input', (e) => {
   if (!startTime) {
     startTime = new Date();
@@ -666,34 +707,43 @@ document.getElementById('type-area').addEventListener('input', (e) => {
   }
   
   const val = e.target.value;
-  const expectedChar = characterArray[currentIndex].char;
+  if (!val) return; // nothing to process (e.g. after backspace already handled)
+
   const typedChar = val.charAt(val.length - 1);
+  const expectedChar = characterArray[currentIndex].char;
   
-  // FIXED: Removed the double tracking loop bug to lock accuracy evaluation alignment
+  totalTyped++;
   if (typedChar === expectedChar) {
     characterArray[currentIndex].state = 'done';
   } else {
     characterArray[currentIndex].state = 'wrong';
-    errorsCount++;
+    totalErrors++;
   }
   currentIndex++;
   
   e.target.value = '';
   
-  const timeElapsed = (new Date() - startTime) / 60000;
-  const wordsTyped = currentIndex / 5;
-  const liveWpm = timeElapsed > 0 ? Math.round(wordsTyped / timeElapsed) : 0;
-  const liveAcc = currentIndex > 0 ? Math.round(((currentIndex - errorsCount) / currentIndex) * 100) : 100;
-  
-  document.getElementById('live-wpm').textContent = liveWpm;
-  document.getElementById('live-acc').textContent = `${liveAcc}%`;
-  
+  // Text is endless so this branch will never fire during a normal run,
+  // but kept as a safety net.
   if (currentIndex >= characterArray.length) {
     endContestRun();
   } else {
     renderCharacters();
+    updateLiveStats();
   }
 });
+
+function updateLiveStats() {
+  if (!startTime) return;
+  const timeElapsed = (new Date() - startTime) / 60000;
+  const wordsTyped = currentIndex / 5;
+  const liveWpm = timeElapsed > 0 ? Math.round(wordsTyped / timeElapsed) : 0;
+  // Accuracy = correct chars / total chars attempted (totalTyped tracks forward strokes)
+  const correctChars = totalTyped - totalErrors;
+  const liveAcc = totalTyped > 0 ? Math.round((correctChars / totalTyped) * 100) : 100;
+  document.getElementById('live-wpm').textContent = liveWpm;
+  document.getElementById('live-acc').textContent = `${liveAcc}%`;
+}
 
 function startClock() {
   let timeRemaining = duration;
@@ -716,10 +766,10 @@ async function endContestRun() {
   document.getElementById('type-area').disabled = true;
   
   const timeElapsed = startTime ? (new Date() - startTime) / 60000 : 1;
-  const finalWpm = Math.round((currentIndex / 5) / (timeElapsed > 1 ? 1 : timeElapsed));
-  const finalAcc = currentIndex > 0 ? Math.round(((currentIndex - errorsCount) / currentIndex) * 100) : 100;
+  const finalWpm = Math.round((currentIndex / 5) / Math.min(timeElapsed, 1));
+  const correctChars = totalTyped - totalErrors;
+  const finalAcc = totalTyped > 0 ? Math.round((correctChars / totalTyped) * 100) : 100;
   
-  // Mark this student as submitted today (client-side guard)
   const todayKey = `submitted_${userContext.studentId.trim().toLowerCase()}_${new Date().toISOString().slice(0,10)}`;
   localStorage.setItem(todayKey, '1');
   
@@ -815,7 +865,6 @@ async function fetchLeaderboardCrud() {
       return;
     }
     
-    // Compute best score per student, keeping track of rowIndex
     const bestMap = {};
     payload.data.forEach(row => {
       const key = String(row.studentId).trim().toLowerCase();
@@ -858,7 +907,6 @@ async function fetchLeaderboardCrud() {
     view.innerHTML = `<div style="text-align:center; padding:40px; color:var(--danger);">Sync failed: ${err.message}</div>`;
   }
 }
-
 
 function openCrudModal(rowData = null) {
   document.getElementById('crud-overlay').classList.add('on');
@@ -938,7 +986,7 @@ function escapeHtml(s) {
 }
 </script>
 
-<!-- ═══════ DEVELOPER CREDIT FOOTER ═══════ -->
+<!-- DEVELOPER CREDIT FOOTER -->
 <style>
 .dev-footer {
   position: fixed;
