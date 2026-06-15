@@ -561,7 +561,7 @@ async function fetchPublicLeaderboard() {
       return;
     }
 
-    const top10 = sorted.slice(0, 10);
+    const top10 = sorted.slice(0, 20);
     let html = '';
     top10.forEach((student, index) => {
       const rank = index + 1;
