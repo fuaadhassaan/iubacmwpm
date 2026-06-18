@@ -291,13 +291,13 @@ h1 span { color:var(--cyan); }
   <nav class="nav">
     <div class="logo">⚙️ Admin Console</div>
     <div style="display:flex; gap:10px;">
-      <button class="btn btn-ghost" onclick="showScreen('home')">🏠 Home</button>
+      <button class="btn btn-ghost" onclick="showScreen('closed')">✕ Exit to Site</button>
     </div>
   </nav>
   <div class="admin-content">
     <div style="display:flex; gap:0; margin-bottom:24px; border:1px solid var(--border); border-radius:10px; overflow:hidden; width:fit-content;">
-      <button id="tab-sheet" class="btn" style="padding:10px 22px; border-radius:0; background:var(--cyan); color:#07090f; font-family:'Orbitron'; font-size:.72rem; letter-spacing:1px; font-weight:700;" onclick="switchAdminTab('sheet')">📋 Sheet Records</button>
-      <button id="tab-board" class="btn btn-ghost" style="padding:10px 22px; border-radius:0; border:none; font-family:'Orbitron'; font-size:.72rem; letter-spacing:1px;" onclick="switchAdminTab('board')">🏆 Leaderboard CRUD</button>
+      <button id="tab-sheet" class="btn btn-ghost" style="padding:10px 22px; border-radius:0; border:none; font-family:'Orbitron'; font-size:.72rem; letter-spacing:1px;" onclick="switchAdminTab('sheet')">📋 Sheet Records</button>
+      <button id="tab-board" class="btn" style="padding:10px 22px; border-radius:0; background:var(--cyan); color:#07090f; font-family:'Orbitron'; font-size:.72rem; letter-spacing:1px; font-weight:700;" onclick="switchAdminTab('board')">🏆 Leaderboard CRUD</button>
     </div>
     <div id="admin-tab-sheet">
       <div class="admin-bar">
@@ -423,7 +423,7 @@ const duration = 60;
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if (id === 'admin') { switchAdminTab('sheet'); fetchAdminLogs(); }
+  if (id === 'admin') { switchAdminTab('board'); fetchLeaderboardCrud(); }
   if (id === 'home') fetchPublicLeaderboard();
   if (id === 'test') {
     testText = buildEndlessText();
@@ -450,11 +450,12 @@ function switchAdminTab(tab) {
   const tabSheet = document.getElementById('tab-sheet');
   const tabBoard = document.getElementById('tab-board');
   if (isSheet) {
-    tabSheet.style.background = 'var(--cyan)'; tabSheet.style.color = '#07090f';
-    tabBoard.style.background = 'var(--surface2)'; tabBoard.style.color = 'var(--text-dim)';
+    tabSheet.style.background = 'var(--cyan)'; tabSheet.style.color = '#07090f'; tabSheet.style.fontWeight = '700';
+    tabBoard.style.background = 'var(--surface2)'; tabBoard.style.color = 'var(--text-dim)'; tabBoard.style.fontWeight = '500';
+    fetchAdminLogs();
   } else {
-    tabBoard.style.background = 'var(--cyan)'; tabBoard.style.color = '#07090f';
-    tabSheet.style.background = 'var(--surface2)'; tabSheet.style.color = 'var(--text-dim)';
+    tabBoard.style.background = 'var(--cyan)'; tabBoard.style.color = '#07090f'; tabBoard.style.fontWeight = '700';
+    tabSheet.style.background = 'var(--surface2)'; tabSheet.style.color = 'var(--text-dim)'; tabSheet.style.fontWeight = '500';
     fetchLeaderboardCrud();
   }
 }
@@ -651,7 +652,7 @@ function closeAdminModal() { document.getElementById('admin-overlay').classList.
 
 function verifyAdminToken() {
   if (document.getElementById('admin-pw').value === CONFIG.ADMIN_PW) {
-    closeAdminModal(); showScreen('home');
+    closeAdminModal(); showScreen('admin');
   } else {
     document.getElementById('pw-err').style.display = 'block';
   }
