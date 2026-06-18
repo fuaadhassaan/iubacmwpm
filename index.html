@@ -165,9 +165,8 @@ h1 span { color:var(--cyan); }
       Thank you, and good wishes to everyone who participated. 🎉
     </p>
 
-    <!-- Hidden admin trigger — triple-click the logo area -->
     <div style="margin-top:8px;">
-      <span id="admin-trigger" onclick="handleAdminTrigger()" style="color:rgba(255,255,255,0.06); font-size:.6rem; cursor:default; user-select:none; letter-spacing:2px;">IUB ACM SC · 2026</span>
+      <button class="btn btn-ghost" onclick="openAdminModal()" style="font-size:.78rem;">⚙ Admin Access</button>
     </div>
   </div>
 </div>
@@ -395,19 +394,6 @@ const CONFIG = {
 };
 
 let userContext = { name:'', studentId:'', email:'' };
-
-/* ── Hidden admin trigger: click the tiny footer text 5 times ── */
-let triggerClicks = 0;
-let triggerTimer = null;
-function handleAdminTrigger() {
-  triggerClicks++;
-  clearTimeout(triggerTimer);
-  triggerTimer = setTimeout(() => { triggerClicks = 0; }, 2000);
-  if (triggerClicks >= 5) {
-    triggerClicks = 0;
-    openAdminModal();
-  }
-}
 
 const TEXT_POOL = [
   "The digital revolution has transformed how computing communities interact across borders. Competitive programming matches logic with extreme speed, pushing parameters beyond simple comprehension. Aspiring network engineers must master syntax structure, algorithm orchestration, and system optimization frameworks daily.",
