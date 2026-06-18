@@ -71,7 +71,6 @@ body::before {
 .pill { display:inline-flex; align-items:center; gap:8px; background: var(--cyan-glow); border: 1px solid var(--border-bright); color: var(--cyan); padding:5px 16px; border-radius:100px; font-size:.72rem; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px; }
 h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(2rem, 5vw, 3.4rem); font-weight:900; line-height:1.08; margin-bottom:16px; }
 h1 span { color:var(--cyan); }
-.hero-p { color:var(--text-dim); font-size:1.05rem; line-height:1.7; margin-bottom:20px; }
 
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding:40px; width:100%; max-width:480px; animation: fadeUp .4s ease both; }
 .field { margin-bottom:18px; text-align:left; }
@@ -108,7 +107,6 @@ h1 span { color:var(--cyan); }
 .lb-row:hover { background: rgba(99,179,237, 0.02); }
 .actions-cell { display:flex; gap:6px; }
 
-/* PUBLIC LEADERBOARD STYLE STACK */
 .pub-lb-container { width: 100%; max-width: 720px; margin: 12px auto; padding: 0 20px; animation: fadeUp .8s ease both; }
 .pub-lb-head { display: grid; grid-template-columns: 80px 2fr 1.5fr 1fr 1fr; padding: 10px 20px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px 10px 0 0; font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
 .pub-lb-body { background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 10px 10px; overflow: hidden; }
@@ -125,37 +123,57 @@ h1 span { color:var(--cyan); }
 .spin { display:inline-block; width:16px; height:16px; border:2px solid rgba(255,255,255,.1); border-top-color:var(--cyan); border-radius:50%; animation:spin .6s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
 </style>
 </head>
 <body>
 
-<!-- TIME GATE SCREEN -->
-<div id="inactive" class="screen" style="align-items:center; justify-content:center; min-height:100vh;">
-  <div style="text-align:center; max-width:580px; padding:40px 28px; animation: fadeUp .6s ease both;">
-    <div style="font-size:3.5rem; margin-bottom:20px;">⏳</div>
-    <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(252,92,125,0.1); border:1px solid rgba(252,92,125,0.3); color:var(--danger); padding:5px 18px; border-radius:100px; font-size:.72rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:22px;">
-      <span style="width:7px;height:7px;background:var(--danger);border-radius:50%;display:inline-block;animation:pulse 1.4s ease infinite;"></span>
-      Contest Inactive
+<!-- ═══════ CONTEST CLOSED SCREEN (PUBLIC) ═══════ -->
+<div id="closed" class="screen active" style="align-items:center; justify-content:center; min-height:100vh;">
+  <div style="text-align:center; max-width:640px; padding:40px 28px; animation: fadeUp .6s ease both;">
+
+    <div style="font-size:3.8rem; margin-bottom:20px; display:inline-block; animation: float 3s ease-in-out infinite;">🏁</div>
+
+    <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(246,201,14,0.1); border:1px solid rgba(246,201,14,0.35); color:var(--gold); padding:5px 18px; border-radius:100px; font-size:.72rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:24px;">
+      <span style="width:7px;height:7px;background:var(--gold);border-radius:50%;display:inline-block;"></span>
+      Contest Concluded
     </div>
-    <h2 style="font-family:'Orbitron'; font-size:clamp(1.6rem,4vw,2.4rem); font-weight:900; line-height:1.2; margin-bottom:18px; color:var(--text);">
-      Come Back<br><span style="color:var(--cyan);">During Contest Hours</span>
+
+    <h2 style="font-family:'Orbitron'; font-size:clamp(1.6rem,4vw,2.6rem); font-weight:900; line-height:1.2; margin-bottom:20px; color:var(--text);">
+      The Contest Has<br><span style="color:var(--cyan);">Been Closed,</span><br>But Only For Now.
     </h2>
-    <p style="color:var(--text-dim); font-size:1rem; line-height:1.75; margin-bottom:28px;">
-      The <strong style="color:var(--text);">IUB ACM SC Typing Contest</strong> is not currently open.<br>
-      We are live every day from <strong style="color:var(--cyan);">9 AM – 5 PM BST</strong>,<br>
-      from <strong style="color:var(--cyan);">June 14 – 18, 2026</strong>. See you then!
-    </p>
-    <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:22px 28px; margin-bottom:28px; display:inline-block;">
-      <div style="font-size:.7rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Bangladesh Standard Time (BST · UTC+6)</div>
-      <div id="gate-clock" style="font-family:'Orbitron'; font-size:1.8rem; font-weight:900; color:var(--cyan); letter-spacing:3px;">--:--:--</div>
-      <div id="gate-date" style="font-size:.82rem; color:var(--text-dim); margin-top:6px;"></div>
+
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:28px 32px; margin-bottom:28px; text-align:left;">
+      <p style="color:var(--text); font-size:.97rem; line-height:1.85; margin-bottom:16px;">
+        More contests will be available soon, organised by the
+        <strong style="color:var(--cyan);">IUB ACM Student Chapter.</strong>
+        Please stay tuned to our Facebook Page.
+      </p>
+      <a href="https://www.facebook.com/iubacmsc" target="_blank" rel="noopener"
+         style="display:inline-flex; align-items:center; gap:10px; background:rgba(99,179,237,0.08); border:1px solid var(--border-bright); color:var(--cyan); padding:10px 20px; border-radius:9px; font-size:.88rem; font-weight:600; text-decoration:none; transition:all .2s; margin-bottom:20px;"
+         onmouseover="this.style.background='rgba(99,179,237,0.18)'" onmouseout="this.style.background='rgba(99,179,237,0.08)'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        facebook.com/iubacmsc
+      </a>
+      <p style="color:var(--text-dim); font-size:.93rem; line-height:1.8; border-top:1px solid var(--border); padding-top:16px;">
+        🏆 The Typing Contest <strong style="color:var(--text);">winners will be announced</strong> on our Facebook Page in the
+        <strong style="color:var(--text);">IUB ACM Student Chapter orientation.</strong>
+      </p>
     </div>
-    <br>
-    <button class="btn btn-ghost" onclick="openAdminModal()" style="font-size:.78rem;">⚙ Admin Access</button>
+
+    <p style="color:var(--text-dim); font-size:.92rem; line-height:1.75; font-style:italic; margin-bottom:28px;">
+      Thank you, and good wishes to everyone who participated. 🎉
+    </p>
+
+    <!-- Hidden admin trigger — triple-click the logo area -->
+    <div style="margin-top:8px;">
+      <span id="admin-trigger" onclick="handleAdminTrigger()" style="color:rgba(255,255,255,0.06); font-size:.6rem; cursor:default; user-select:none; letter-spacing:2px;">IUB ACM SC · 2026</span>
+    </div>
   </div>
 </div>
 
-<div id="home" class="screen active">
+<!-- ═══════ HOME (ADMIN ONLY) ═══════ -->
+<div id="home" class="screen">
   <nav class="nav" style="width: 100%;">
     <div class="logo">IUB ACM SC <em>WPM</em></div>
     <div style="display:flex; align-items:center; gap:14px;">
@@ -174,16 +192,8 @@ h1 span { color:var(--cyan); }
     </div>
     <h1>Prove Your<br><span>Typing Speed</span></h1>
     <p style="color:var(--text); font-size:.97rem; line-height:1.7; margin-bottom:14px;">
-      Welcome to the booth of <strong>IUB ACM Student Chapter!</strong> Here you can participate in a
-      <strong>1-minute typing contest</strong> just by entering your Name, IUB ID and IUB Email Address.
+      Welcome to the booth of <strong>IUB ACM Student Chapter!</strong>
     </p>
-    <p style="color:var(--text-dim); font-size:.82rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Please note the followings:</p>
-    <ul style="list-style:none; color:var(--text-dim); font-size:.9rem; line-height:1.75; margin-bottom:16px; text-align:left; display:inline-block;">
-      <li style="margin-bottom:4px;">— You can participate the contest <strong style="color:var(--text);">once in a day.</strong> You are welcomed to try again on the next day, the best one will be counted by the end of this contest!</li>
-      <li style="margin-bottom:4px;">— The results will be published by the <strong style="color:var(--text);">end of this contest.</strong></li>
-      <li>— <strong style="color:var(--text);">Top 3 ranking holders</strong> will be announced on our socials and orientation!</li>
-    </ul>
-    <p style="color:var(--text-dim); font-size:.9rem; margin-bottom:20px; font-style:italic;">Good luck! Just do it!</p>
     <div>
       <button class="btn btn-primary" onclick="showScreen('register')">Enter Typing Arena</button>
     </div>
@@ -200,6 +210,7 @@ h1 span { color:var(--cyan); }
   </div>
 </div>
 
+<!-- ═══════ REGISTER ═══════ -->
 <div id="register" class="screen">
   <nav class="nav">
     <div class="logo">IUB ACM SC <em>WPM</em></div>
@@ -229,6 +240,7 @@ h1 span { color:var(--cyan); }
   </div>
 </div>
 
+<!-- ═══════ TEST ═══════ -->
 <div id="test" class="screen">
   <nav class="nav">
     <div class="logo">IUB ACM SC <em>WPM</em> ⚡ Active Run</div>
@@ -246,7 +258,6 @@ h1 span { color:var(--cyan); }
         <div><div style="font-size:1.8rem; font-family:'Orbitron'; font-weight:700; color:var(--danger);" id="live-timer">60</div><div style="font-size:.65rem; color:var(--text-dim);">SECONDS</div></div>
       </div>
     </div>
-    
     <div class="text-panel" id="text-panel">
       <div class="text-scroller" id="text-scroller"></div>
     </div>
@@ -257,6 +268,7 @@ h1 span { color:var(--cyan); }
   </div>
 </div>
 
+<!-- ═══════ RESULT ═══════ -->
 <div id="result" class="screen">
   <nav class="nav">
     <div class="logo">IUB ACM SC <em>WPM</em></div>
@@ -275,6 +287,7 @@ h1 span { color:var(--cyan); }
   </div>
 </div>
 
+<!-- ═══════ ADMIN ═══════ -->
 <div id="admin" class="screen">
   <nav class="nav">
     <div class="logo">⚙️ Admin Console</div>
@@ -287,7 +300,6 @@ h1 span { color:var(--cyan); }
       <button id="tab-sheet" class="btn" style="padding:10px 22px; border-radius:0; background:var(--cyan); color:#07090f; font-family:'Orbitron'; font-size:.72rem; letter-spacing:1px; font-weight:700;" onclick="switchAdminTab('sheet')">📋 Sheet Records</button>
       <button id="tab-board" class="btn btn-ghost" style="padding:10px 22px; border-radius:0; border:none; font-family:'Orbitron'; font-size:.72rem; letter-spacing:1px;" onclick="switchAdminTab('board')">🏆 Leaderboard CRUD</button>
     </div>
-
     <div id="admin-tab-sheet">
       <div class="admin-bar">
         <div>
@@ -306,7 +318,6 @@ h1 span { color:var(--cyan); }
         <div id="admin-rows"></div>
       </div>
     </div>
-
     <div id="admin-tab-board" style="display:none;">
       <div class="admin-bar">
         <div>
@@ -327,6 +338,7 @@ h1 span { color:var(--cyan); }
   </div>
 </div>
 
+<!-- ═══════ ADMIN LOGIN OVERLAY ═══════ -->
 <div class="overlay" id="admin-overlay">
   <div class="modal card">
     <h3 style="font-family:'Orbitron'; margin-bottom:10px;">Elevated Access</h3>
@@ -342,6 +354,7 @@ h1 span { color:var(--cyan); }
   </div>
 </div>
 
+<!-- ═══════ CRUD OVERLAY ═══════ -->
 <div class="overlay" id="crud-overlay">
   <div class="modal card" style="max-width:520px;">
     <h3 id="crud-title" style="font-family:'Orbitron'; margin-bottom:15px;">Modify Response Metrics</h3>
@@ -383,6 +396,19 @@ const CONFIG = {
 
 let userContext = { name:'', studentId:'', email:'' };
 
+/* ── Hidden admin trigger: click the tiny footer text 5 times ── */
+let triggerClicks = 0;
+let triggerTimer = null;
+function handleAdminTrigger() {
+  triggerClicks++;
+  clearTimeout(triggerTimer);
+  triggerTimer = setTimeout(() => { triggerClicks = 0; }, 2000);
+  if (triggerClicks >= 5) {
+    triggerClicks = 0;
+    openAdminModal();
+  }
+}
+
 const TEXT_POOL = [
   "The digital revolution has transformed how computing communities interact across borders. Competitive programming matches logic with extreme speed, pushing parameters beyond simple comprehension. Aspiring network engineers must master syntax structure, algorithm orchestration, and system optimization frameworks daily.",
   "Artificial intelligence continues to reshape industries at an unprecedented pace. Machine learning models require massive datasets and careful tuning to produce reliable results. Engineers who understand both theory and practical implementation will lead the next generation of technological breakthroughs.",
@@ -394,23 +420,16 @@ const TEXT_POOL = [
   "Open source collaboration has produced some of the most impactful software tools in modern history. Developers around the world contribute code, report bugs, and improve documentation freely. This model accelerates innovation and ensures that high-quality tools remain accessible to everyone."
 ];
 
-/* ═══════════════════════════════════════════════════════════════
-   ENDLESS TEXT ENGINE
-   Builds a long continuous string by shuffling & concatenating
-   passages so the test never runs out of text within 60 seconds.
-   ═══════════════════════════════════════════════════════════════ */
 function buildEndlessText() {
-  // Shuffle a copy of the pool
   const shuffled = [...TEXT_POOL].sort(() => Math.random() - 0.5);
-  // Join with a single space — enough for ~3–4 minutes of typing at 100 WPM
   return shuffled.join(' ');
 }
 
 let testText = '';
 let characterArray = [];
 let currentIndex = 0;
-let totalTyped = 0;      // total keystrokes attempted (for accuracy across backspaces)
-let totalErrors = 0;     // cumulative error count
+let totalTyped = 0;
+let totalErrors = 0;
 let startTime = null;
 let countdownTimer = null;
 const duration = 60;
@@ -418,10 +437,7 @@ const duration = 60;
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if (id === 'admin') {
-    switchAdminTab('sheet');
-    fetchAdminLogs();
-  }
+  if (id === 'admin') { switchAdminTab('sheet'); fetchAdminLogs(); }
   if (id === 'home') fetchPublicLeaderboard();
   if (id === 'test') {
     testText = buildEndlessText();
@@ -430,8 +446,7 @@ function showScreen(id) {
     startBtn.disabled = false;
     startBtn.textContent = 'Unlock Keyboard';
     const ta = document.getElementById('type-area');
-    ta.disabled = true;
-    ta.value = '';
+    ta.disabled = true; ta.value = '';
     document.getElementById('text-scroller').innerHTML = '';
     document.getElementById('text-scroller').style.top = '24px';
     document.getElementById('live-wpm').textContent = '0';
@@ -449,133 +464,61 @@ function switchAdminTab(tab) {
   const tabSheet = document.getElementById('tab-sheet');
   const tabBoard = document.getElementById('tab-board');
   if (isSheet) {
-    tabSheet.style.background = 'var(--cyan)'; tabSheet.style.color = '#07090f'; tabSheet.style.borderBottom = 'none';
+    tabSheet.style.background = 'var(--cyan)'; tabSheet.style.color = '#07090f';
     tabBoard.style.background = 'var(--surface2)'; tabBoard.style.color = 'var(--text-dim)';
   } else {
-    tabBoard.style.background = 'var(--cyan)'; tabBoard.style.color = '#07090f'; tabBoard.style.borderBottom = 'none';
+    tabBoard.style.background = 'var(--cyan)'; tabBoard.style.color = '#07090f';
     tabSheet.style.background = 'var(--surface2)'; tabSheet.style.color = 'var(--text-dim)';
     fetchLeaderboardCrud();
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  checkTimeGate();
-  startGateClock();
-  fetchPublicLeaderboard();
-});
+window.addEventListener('DOMContentLoaded', () => { startGateClock(); });
 
-/* ═══════════════════════════════════════════════════════════════
-   TIME GATE
-   ═══════════════════════════════════════════════════════════════ */
 function getBSTTime() {
   const now = new Date();
   const utc = now.getTime() + now.getTimezoneOffset() * 60000;
   return new Date(utc + 6 * 3600000);
 }
 
-function isContestActive() {
-  const bst = getBSTTime();
-  const date  = bst.getDate();
-  const month = bst.getMonth();
-  const year  = bst.getFullYear();
-  const hour  = bst.getHours();
-  const validDate = year === 2026 && month === 5 && date >= 14 && date <= 18;
-  const activeHour = hour >= 9 && hour < 17;
-  return validDate && activeHour;
-}
-
-function checkTimeGate() {
-  const homeEl     = document.getElementById('home');
-  const inactiveEl = document.getElementById('inactive');
-  if (inactiveEl.classList.contains('active')) {
-    inactiveEl.classList.remove('active');
-    homeEl.classList.add('active');
-  }
-}
-
 function startGateClock() {
   function tick() {
     const bst = getBSTTime();
-    const hh  = String(bst.getHours()).padStart(2,'0');
-    const mm  = String(bst.getMinutes()).padStart(2,'0');
-    const ss  = String(bst.getSeconds()).padStart(2,'0');
-    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const timeStr = `${hh}:${mm}:${ss}`;
-    const dateStr = `${days[bst.getDay()]}, ${bst.getDate()} ${months[bst.getMonth()]} ${bst.getFullYear()}`;
-    const clockEl = document.getElementById('gate-clock');
-    const dateEl  = document.getElementById('gate-date');
+    const hh = String(bst.getHours()).padStart(2,'0');
+    const mm = String(bst.getMinutes()).padStart(2,'0');
+    const ss = String(bst.getSeconds()).padStart(2,'0');
     const homeClockEl = document.getElementById('home-clock');
-    if (clockEl) clockEl.textContent = timeStr;
-    if (dateEl)  dateEl.textContent  = dateStr;
-    if (homeClockEl) homeClockEl.textContent = timeStr;
+    if (homeClockEl) homeClockEl.textContent = `${hh}:${mm}:${ss}`;
   }
-  tick();
-  setInterval(tick, 1000);
+  tick(); setInterval(tick, 1000);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   PUBLIC LEADERBOARD
-   Ranked by WPM desc, then accuracy desc as tiebreaker.
-   Only entries with accuracy >= 75% are shown.
-   ═══════════════════════════════════════════════════════════════ */
 async function fetchPublicLeaderboard() {
   const container = document.getElementById('public-leaderboard');
   try {
     const res = await fetch(CONFIG.SCRIPT_URL);
     const payload = await res.json();
-    
     if (!payload.success || !payload.data || payload.data.length === 0) {
-      container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-dim);">No active scores logged yet. Be the first!</div>';
+      container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-dim);">No active scores logged yet.</div>';
       return;
     }
-
-    // Compute best-per-student score (highest WPM first, accuracy as tiebreaker)
     const bestMap = {};
     payload.data.forEach(row => {
       const key = String(row.studentId).trim().toLowerCase();
-      const wpm = Number(row.wpm);
-      const acc = Number(row.accuracy);
-      if (!bestMap[key]) {
-        bestMap[key] = { ...row };
-      } else {
-        const existing = bestMap[key];
-        // Keep higher WPM; if equal WPM, keep higher accuracy
-        if (wpm > existing.wpm || (wpm === existing.wpm && acc > existing.accuracy)) {
-          bestMap[key] = { ...row };
-        }
-      }
+      const wpm = Number(row.wpm), acc = Number(row.accuracy);
+      if (!bestMap[key]) { bestMap[key] = { ...row }; }
+      else if (wpm > bestMap[key].wpm || (wpm === bestMap[key].wpm && acc > bestMap[key].accuracy)) { bestMap[key] = { ...row }; }
     });
-
-    // Sort: WPM desc, accuracy desc as tiebreaker. Filter low accuracy.
-    const MIN_ACCURACY = 75;
     const sorted = Object.values(bestMap)
-      .filter(r => Number(r.accuracy) >= MIN_ACCURACY)
-      .sort((a, b) => {
-        if (b.wpm !== a.wpm) return b.wpm - a.wpm;
-        return b.accuracy - a.accuracy;
-      });
-
-    if (sorted.length === 0) {
-      container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-dim);">No qualifying scores yet. Aim for accuracy above 75%!</div>';
-      return;
-    }
-
-    const top10 = sorted.slice(0, 20);
+      .filter(r => Number(r.accuracy) >= 75)
+      .sort((a, b) => b.wpm !== a.wpm ? b.wpm - a.wpm : b.accuracy - a.accuracy);
+    if (sorted.length === 0) { container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-dim);">No qualifying scores yet.</div>'; return; }
     let html = '';
-    top10.forEach((student, index) => {
+    sorted.slice(0, 20).forEach((student, index) => {
       const rank = index + 1;
-      let badgeStyle = `<span class="rank-badge">${rank}</span>`;
-      if (rank <= 3) badgeStyle = `<span class="rank-badge rank-${rank}">${rank}</span>`;
-      
-      html += `
-      <div class="pub-lb-row">
-        <div>${badgeStyle}</div>
-        <div style="font-weight:600;">${escapeHtml(student.name)}</div>
-        <div style="font-family:'DM Mono'; color:var(--text-dim);">${escapeHtml(student.studentId)}</div>
-        <div style="font-family:'Orbitron'; font-weight:700; color:var(--cyan);">${student.wpm}</div>
-        <div style="color:var(--success); font-weight:600;">${student.accuracy}%</div>
-      </div>`;
+      let badge = `<span class="rank-badge">${rank}</span>`;
+      if (rank <= 3) badge = `<span class="rank-badge rank-${rank}">${rank}</span>`;
+      html += `<div class="pub-lb-row"><div>${badge}</div><div style="font-weight:600;">${escapeHtml(student.name)}</div><div style="font-family:'DM Mono';color:var(--text-dim);">${escapeHtml(student.studentId)}</div><div style="font-family:'Orbitron';font-weight:700;color:var(--cyan);">${student.wpm}</div><div style="color:var(--success);font-weight:600;">${student.accuracy}%</div></div>`;
     });
     container.innerHTML = html;
   } catch (err) {
@@ -583,86 +526,59 @@ async function fetchPublicLeaderboard() {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   REGISTRATION GATE
-   ═══════════════════════════════════════════════════════════════ */
 async function validateAndProceed() {
   const name = document.getElementById('inp-name').value.trim();
   const id = document.getElementById('inp-id').value.trim();
   const email = document.getElementById('inp-email').value.trim();
-  
   document.getElementById('err-name').style.display = name ? 'none' : 'block';
   document.getElementById('err-id').style.display = id ? 'none' : 'block';
   document.getElementById('err-email').style.display = email ? 'none' : 'block';
   document.getElementById('gate-err').style.display = 'none';
-
   if (!name || !id || !email) return;
-
   const todayKey = `submitted_${id.trim().toLowerCase()}_${new Date().toISOString().slice(0,10)}`;
   if (localStorage.getItem(todayKey)) {
-    document.getElementById('gate-err').textContent = "⛔ Access Denied: You have already submitted a typing speed run today. Please come back tomorrow!";
-    document.getElementById('gate-err').style.display = 'block';
-    return;
+    document.getElementById('gate-err').textContent = "⛔ Access Denied: You have already submitted a typing speed run today.";
+    document.getElementById('gate-err').style.display = 'block'; return;
   }
-  
   const submitBtn = document.getElementById('btn-reg-submit');
   submitBtn.disabled = true;
   submitBtn.innerHTML = '<span class="spin"></span> Querying Eligibility Logs...';
-
   try {
     const res = await fetch(`${CONFIG.SCRIPT_URL}?action=checkEligibility&studentId=${encodeURIComponent(id)}`);
     const status = await res.json();
-    
     if (status.allowed) {
       userContext = { name, studentId: id, email };
       document.getElementById('run-tag').textContent = `${name} (${id})`;
       showScreen('test');
     } else {
-      document.getElementById('gate-err').textContent = "⛔ Access Denied: You have already submitted a typing speed run today. Please come back tomorrow!";
+      document.getElementById('gate-err').textContent = "⛔ Access Denied: You have already submitted a typing speed run today.";
       document.getElementById('gate-err').style.display = 'block';
     }
   } catch (e) {
-    document.getElementById('gate-err').textContent = "Server communications anomaly. Try running deployment sync check.";
+    document.getElementById('gate-err').textContent = "Server communications anomaly.";
     document.getElementById('gate-err').style.display = 'block';
   } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Begin Validation Run';
+    submitBtn.disabled = false; submitBtn.textContent = 'Begin Validation Run';
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   TYPING ENGINE
-   FIX 1 — Backspace: intercept keydown and move cursor back
-   FIX 2 — Endless: text pool is long enough to never finish
-   ═══════════════════════════════════════════════════════════════ */
 function primeTypingArena() {
   document.getElementById('start-btn').style.display = 'none';
   const ta = document.getElementById('type-area');
-  ta.disabled = false;
-  ta.value = '';
-  
-  currentIndex = 0;
-  totalTyped = 0;
-  totalErrors = 0;
-  startTime = null;
-  
+  ta.disabled = false; ta.value = '';
+  currentIndex = 0; totalTyped = 0; totalErrors = 0; startTime = null;
   document.getElementById('live-wpm').textContent = '0';
   document.getElementById('live-acc').textContent = '100%';
   document.getElementById('live-timer').textContent = duration;
-  
-  const scroller = document.getElementById('text-scroller');
-  scroller.style.top = "24px";
-  
+  document.getElementById('text-scroller').style.top = "24px";
   characterArray = testText.split('').map(char => ({ char, state: 'wait' }));
-  renderCharacters();
-  ta.focus();
+  renderCharacters(); ta.focus();
 }
 
 function renderCharacters() {
   const panel = document.getElementById('text-panel');
   const scroller = document.getElementById('text-scroller');
   scroller.innerHTML = '';
-  
   characterArray.forEach((c, idx) => {
     const span = document.createElement('span');
     span.textContent = c.char;
@@ -672,75 +588,43 @@ function renderCharacters() {
     else span.className = 'c-wait';
     scroller.appendChild(span);
   });
-  
   const cursorSpan = scroller.querySelector('.c-cursor');
   if (cursorSpan) {
-    const panelPad = 24;
-    const panelH = panel.clientHeight - panelPad * 2;
-    const cursorTop = cursorSpan.offsetTop;
-    if (cursorTop > panelH * 0.45) {
-      scroller.style.top = `${panelPad - (cursorTop - panelH * 0.35)}px`;
-    } else {
-      scroller.style.top = `${panelPad}px`;
-    }
+    const panelPad = 24, panelH = panel.clientHeight - panelPad * 2, cursorTop = cursorSpan.offsetTop;
+    scroller.style.top = cursorTop > panelH * 0.45 ? `${panelPad - (cursorTop - panelH * 0.35)}px` : `${panelPad}px`;
   }
 }
 
-/* ── Backspace handler (keydown, before input fires) ── */
 document.getElementById('type-area').addEventListener('keydown', (e) => {
   if (e.key === 'Backspace') {
-    e.preventDefault(); // stop the textarea from consuming the character
+    e.preventDefault();
     if (currentIndex <= 0) return;
     currentIndex--;
-    // Revert the character state back to waiting
     characterArray[currentIndex].state = 'wait';
-    renderCharacters();
-    updateLiveStats();
+    renderCharacters(); updateLiveStats();
   }
 });
 
-/* ── Regular character input ── */
 document.getElementById('type-area').addEventListener('input', (e) => {
-  if (!startTime) {
-    startTime = new Date();
-    startClock();
-  }
-  
+  if (!startTime) { startTime = new Date(); startClock(); }
   const val = e.target.value;
-  if (!val) return; // nothing to process (e.g. after backspace already handled)
-
+  if (!val) return;
   const typedChar = val.charAt(val.length - 1);
   const expectedChar = characterArray[currentIndex].char;
-  
   totalTyped++;
-  if (typedChar === expectedChar) {
-    characterArray[currentIndex].state = 'done';
-  } else {
-    characterArray[currentIndex].state = 'wrong';
-    totalErrors++;
-  }
+  if (typedChar === expectedChar) { characterArray[currentIndex].state = 'done'; }
+  else { characterArray[currentIndex].state = 'wrong'; totalErrors++; }
   currentIndex++;
-  
   e.target.value = '';
-  
-  // Text is endless so this branch will never fire during a normal run,
-  // but kept as a safety net.
-  if (currentIndex >= characterArray.length) {
-    endContestRun();
-  } else {
-    renderCharacters();
-    updateLiveStats();
-  }
+  if (currentIndex >= characterArray.length) { endContestRun(); }
+  else { renderCharacters(); updateLiveStats(); }
 });
 
 function updateLiveStats() {
   if (!startTime) return;
   const timeElapsed = (new Date() - startTime) / 60000;
-  const wordsTyped = currentIndex / 5;
-  const liveWpm = timeElapsed > 0 ? Math.round(wordsTyped / timeElapsed) : 0;
-  // Accuracy = correct chars / total chars attempted (totalTyped tracks forward strokes)
-  const correctChars = totalTyped - totalErrors;
-  const liveAcc = totalTyped > 0 ? Math.round((correctChars / totalTyped) * 100) : 100;
+  const liveWpm = timeElapsed > 0 ? Math.round((currentIndex / 5) / timeElapsed) : 0;
+  const liveAcc = totalTyped > 0 ? Math.round(((totalTyped - totalErrors) / totalTyped) * 100) : 100;
   document.getElementById('live-wpm').textContent = liveWpm;
   document.getElementById('live-acc').textContent = `${liveAcc}%`;
 }
@@ -750,54 +634,28 @@ function startClock() {
   countdownTimer = setInterval(() => {
     timeRemaining--;
     document.getElementById('live-timer').textContent = timeRemaining;
-    if (timeRemaining <= 0) {
-      endContestRun();
-    }
+    if (timeRemaining <= 0) endContestRun();
   }, 1000);
 }
 
-function abortTestAndGoHome() {
-  clearInterval(countdownTimer);
-  showScreen('home');
-}
+function abortTestAndGoHome() { clearInterval(countdownTimer); showScreen('home'); }
 
 async function endContestRun() {
   clearInterval(countdownTimer);
   document.getElementById('type-area').disabled = true;
-  
   const timeElapsed = startTime ? (new Date() - startTime) / 60000 : 1;
   const finalWpm = Math.round((currentIndex / 5) / Math.min(timeElapsed, 1));
-  const correctChars = totalTyped - totalErrors;
-  const finalAcc = totalTyped > 0 ? Math.round((correctChars / totalTyped) * 100) : 100;
-  
+  const finalAcc = totalTyped > 0 ? Math.round(((totalTyped - totalErrors) / totalTyped) * 100) : 100;
   const todayKey = `submitted_${userContext.studentId.trim().toLowerCase()}_${new Date().toISOString().slice(0,10)}`;
   localStorage.setItem(todayKey, '1');
-  
   document.getElementById('res-wpm').textContent = finalWpm;
   document.getElementById('res-acc').textContent = `${finalAcc}%`;
   showScreen('result');
-  
   try {
-    await fetch(CONFIG.SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: userContext.name,
-        studentId: userContext.studentId,
-        email: userContext.email,
-        wpm: finalWpm,
-        accuracy: finalAcc
-      })
-    });
-  } catch (err) {
-    console.error("Transmission error:", err);
-  }
+    await fetch(CONFIG.SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name: userContext.name, studentId: userContext.studentId, email: userContext.email, wpm: finalWpm, accuracy: finalAcc }) });
+  } catch (err) { console.error("Transmission error:", err); }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   ADMIN CONFIG
-   ═══════════════════════════════════════════════════════════════ */
 function openAdminModal() {
   document.getElementById('admin-overlay').classList.add('on');
   document.getElementById('admin-pw').value = '';
@@ -807,113 +665,54 @@ function closeAdminModal() { document.getElementById('admin-overlay').classList.
 
 function verifyAdminToken() {
   if (document.getElementById('admin-pw').value === CONFIG.ADMIN_PW) {
-    closeAdminModal();
-    showScreen('admin');
+    closeAdminModal(); showScreen('home');
   } else {
     document.getElementById('pw-err').style.display = 'block';
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   ADMINISTRATIVE CRUD SUB-SYSTEM
-   ═══════════════════════════════════════════════════════════════ */
 async function fetchAdminLogs() {
   const view = document.getElementById('admin-rows');
-  view.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);"><span class="spin"></span> Fetching Master Sheet Audit Stream...</div>';
-  
+  view.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);"><span class="spin"></span> Fetching...</div>';
   try {
     const res = await fetch(`${CONFIG.SCRIPT_URL}?action=adminFetch`);
     const payload = await res.json();
-    
-    if (!payload.success || payload.data.length === 0) {
-      view.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);">No submission entries found in sheet ledger rows.</div>';
-      return;
-    }
-    
+    if (!payload.success || payload.data.length === 0) { view.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);">No entries found.</div>'; return; }
     let htmlStr = '';
     payload.data.forEach(row => {
-      htmlStr += `
-      <div class="lb-row">
-        <div style="font-family:'DM Mono'; color:var(--cyan);">#${row.rowIndex}</div>
-        <div style="font-weight:600;">${escapeHtml(row.name)}</div>
-        <div style="font-family:'DM Mono'; color:var(--text-dim);">${escapeHtml(row.studentId)}</div>
-        <div style="font-size:.85rem; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis;">${escapeHtml(row.email)}</div>
-        <div style="font-family:'Orbitron'; font-weight:700; color:var(--cyan);">${row.wpm}</div>
-        <div style="color:var(--success); font-weight:600;">${row.accuracy}%</div>
-        <div class="actions-cell">
-          <button class="btn btn-sm btn-edit" onclick='openCrudModal(${JSON.stringify(row).replace(/'/g, "&apos;")})'>Edit</button>
-          <button class="btn btn-sm btn-danger" onclick="executeRowPurge(${row.rowIndex})">Delete</button>
-        </div>
-      </div>`;
+      htmlStr += `<div class="lb-row"><div style="font-family:'DM Mono';color:var(--cyan);">#${row.rowIndex}</div><div style="font-weight:600;">${escapeHtml(row.name)}</div><div style="font-family:'DM Mono';color:var(--text-dim);">${escapeHtml(row.studentId)}</div><div style="font-size:.85rem;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;">${escapeHtml(row.email)}</div><div style="font-family:'Orbitron';font-weight:700;color:var(--cyan);">${row.wpm}</div><div style="color:var(--success);font-weight:600;">${row.accuracy}%</div><div class="actions-cell"><button class="btn btn-sm btn-edit" onclick='openCrudModal(${JSON.stringify(row).replace(/'/g,"&apos;")})'>Edit</button><button class="btn btn-sm btn-danger" onclick="executeRowPurge(${row.rowIndex})">Delete</button></div></div>`;
     });
     view.innerHTML = htmlStr;
-  } catch (err) {
-    view.innerHTML = `<div style="text-align:center; padding:40px; color:var(--danger);">Sync failed: ${err.message}</div>`;
-  }
+  } catch (err) { view.innerHTML = `<div style="text-align:center; padding:40px; color:var(--danger);">Sync failed: ${err.message}</div>`; }
 }
 
 async function fetchLeaderboardCrud() {
   const view = document.getElementById('admin-lb-rows');
-  view.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);"><span class="spin"></span> Computing best scores...</div>';
-  
+  view.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);"><span class="spin"></span> Computing...</div>';
   try {
     const res = await fetch(`${CONFIG.SCRIPT_URL}?action=adminFetch`);
     const payload = await res.json();
-    
-    if (!payload.success || payload.data.length === 0) {
-      view.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);">No submission entries found.</div>';
-      return;
-    }
-    
+    if (!payload.success || payload.data.length === 0) { view.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);">No entries found.</div>'; return; }
     const bestMap = {};
-    payload.data.forEach(row => {
-      const key = String(row.studentId).trim().toLowerCase();
-      if (!bestMap[key] || Number(row.wpm) > bestMap[key].wpm) {
-        bestMap[key] = { ...row };
-      }
-    });
-    
+    payload.data.forEach(row => { const key = String(row.studentId).trim().toLowerCase(); if (!bestMap[key] || Number(row.wpm) > bestMap[key].wpm) bestMap[key] = { ...row }; });
     const sorted = Object.values(bestMap).sort((a, b) => b.wpm - a.wpm);
-    
-    if (sorted.length === 0) {
-      view.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);">No entries found.</div>';
-      return;
-    }
-    
     let htmlStr = '';
     sorted.forEach((row, idx) => {
       const rank = idx + 1;
-      let rankBadge = `<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:.75rem;font-family:'Orbitron';font-weight:700;background:var(--surface2);color:var(--text-dim);">${rank}</span>`;
-      if (rank === 1) rankBadge = `<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:.75rem;font-family:'Orbitron';font-weight:700;background:var(--gold);color:#000;">${rank}</span>`;
-      else if (rank === 2) rankBadge = `<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:.75rem;font-family:'Orbitron';font-weight:700;background:var(--silver);color:#000;">${rank}</span>`;
-      else if (rank === 3) rankBadge = `<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:.75rem;font-family:'Orbitron';font-weight:700;background:var(--bronze);color:#000;">${rank}</span>`;
-      
-      htmlStr += `
-      <div style="display:grid; grid-template-columns:60px 2fr 1.5fr 2fr 90px 100px 160px; padding:14px 20px; border-bottom:1px solid rgba(255,255,255,.03); font-size:.9rem; align-items:center;">
-        <div>${rankBadge}</div>
-        <div style="font-weight:600;">${escapeHtml(row.name)}</div>
-        <div style="font-family:'DM Mono'; color:var(--text-dim);">${escapeHtml(row.studentId)}</div>
-        <div style="font-size:.85rem; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis;">${escapeHtml(row.email)}</div>
-        <div style="font-family:'Orbitron'; font-weight:700; color:var(--cyan);">${row.wpm}</div>
-        <div style="color:var(--success); font-weight:600;">${row.accuracy}%</div>
-        <div class="actions-cell">
-          <button class="btn btn-sm btn-edit" onclick='openCrudModal(${JSON.stringify(row).replace(/'/g, "&apos;")})'>Edit</button>
-          <button class="btn btn-sm btn-danger" onclick="executeRowPurge(${row.rowIndex}, true)">Delete</button>
-        </div>
-      </div>`;
+      let rb = `<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:.75rem;font-family:'Orbitron';font-weight:700;background:var(--surface2);color:var(--text-dim);">${rank}</span>`;
+      if (rank===1) rb=`<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:.75rem;font-family:'Orbitron';font-weight:700;background:var(--gold);color:#000;">${rank}</span>`;
+      else if (rank===2) rb=`<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:.75rem;font-family:'Orbitron';font-weight:700;background:var(--silver);color:#000;">${rank}</span>`;
+      else if (rank===3) rb=`<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:.75rem;font-family:'Orbitron';font-weight:700;background:var(--bronze);color:#000;">${rank}</span>`;
+      htmlStr += `<div style="display:grid;grid-template-columns:60px 2fr 1.5fr 2fr 90px 100px 160px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.03);font-size:.9rem;align-items:center;"><div>${rb}</div><div style="font-weight:600;">${escapeHtml(row.name)}</div><div style="font-family:'DM Mono';color:var(--text-dim);">${escapeHtml(row.studentId)}</div><div style="font-size:.85rem;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;">${escapeHtml(row.email)}</div><div style="font-family:'Orbitron';font-weight:700;color:var(--cyan);">${row.wpm}</div><div style="color:var(--success);font-weight:600;">${row.accuracy}%</div><div class="actions-cell"><button class="btn btn-sm btn-edit" onclick='openCrudModal(${JSON.stringify(row).replace(/'/g,"&apos;")})'>Edit</button><button class="btn btn-sm btn-danger" onclick="executeRowPurge(${row.rowIndex},true)">Delete</button></div></div>`;
     });
     view.innerHTML = htmlStr;
-  } catch (err) {
-    view.innerHTML = `<div style="text-align:center; padding:40px; color:var(--danger);">Sync failed: ${err.message}</div>`;
-  }
+  } catch (err) { view.innerHTML = `<div style="text-align:center; padding:40px; color:var(--danger);">Sync failed: ${err.message}</div>`; }
 }
 
 function openCrudModal(rowData = null) {
   document.getElementById('crud-overlay').classList.add('on');
   const saveBtn = document.getElementById('crud-save-btn');
-  saveBtn.disabled = false;
-  saveBtn.textContent = 'Save Data Entry';
-
+  saveBtn.disabled = false; saveBtn.textContent = 'Save Data Entry';
   if (rowData) {
     document.getElementById('crud-title').textContent = `✏️ Edit Sheet Record Row #${rowData.rowIndex}`;
     document.getElementById('crud-row-index').value = rowData.rowIndex;
@@ -924,61 +723,34 @@ function openCrudModal(rowData = null) {
     document.getElementById('crud-acc').value = rowData.accuracy;
   } else {
     document.getElementById('crud-title').textContent = '➕ Add New Response Entry';
-    document.getElementById('crud-row-index').value = '';
-    document.getElementById('crud-name').value = '';
-    document.getElementById('crud-id').value = '';
-    document.getElementById('crud-email').value = '';
+    ['crud-row-index','crud-name','crud-id','crud-email'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('crud-wpm').value = '45';
     document.getElementById('crud-acc').value = '98';
   }
 }
-
 function closeCrudModal() { document.getElementById('crud-overlay').classList.remove('on'); }
 
 async function commitCrudSave() {
   const saveBtn = document.getElementById('crud-save-btn');
-  saveBtn.disabled = true;
-  saveBtn.innerHTML = '<span class="spin"></span> Committing Changes...';
-  
-  const payload = {
-    rowIndex: document.getElementById('crud-row-index').value,
-    name: document.getElementById('crud-name').value.trim(),
-    studentId: document.getElementById('crud-id').value.trim(),
-    email: document.getElementById('crud-email').value.trim(),
-    wpm: document.getElementById('crud-wpm').value,
-    accuracy: document.getElementById('crud-acc').value
-  };
-  
+  saveBtn.disabled = true; saveBtn.innerHTML = '<span class="spin"></span> Committing...';
+  const payload = { rowIndex: document.getElementById('crud-row-index').value, name: document.getElementById('crud-name').value.trim(), studentId: document.getElementById('crud-id').value.trim(), email: document.getElementById('crud-email').value.trim(), wpm: document.getElementById('crud-wpm').value, accuracy: document.getElementById('crud-acc').value };
   try {
-    const endpoint = `${CONFIG.SCRIPT_URL}?action=adminSave&data=${encodeURIComponent(JSON.stringify(payload))}`;
-    const res = await fetch(endpoint);
+    const res = await fetch(`${CONFIG.SCRIPT_URL}?action=adminSave&data=${encodeURIComponent(JSON.stringify(payload))}`);
     const resData = await res.json();
-    if (resData.success) {
-      closeCrudModal();
-      fetchAdminLogs();
-    } else {
-      alert("Error processing updates: " + resData.error);
-    }
-  } catch (err) {
-    alert("Connection to backend server timed out.");
-  } finally {
-    saveBtn.disabled = false;
-  }
+    if (resData.success) { closeCrudModal(); fetchAdminLogs(); }
+    else alert("Error: " + resData.error);
+  } catch (err) { alert("Connection timed out."); }
+  finally { saveBtn.disabled = false; }
 }
 
 async function executeRowPurge(rowIndex, fromLeaderboard = false) {
-  if (!confirm(`Are you completely sure you want to permanently erase Row #${rowIndex}?`)) return;
+  if (!confirm(`Permanently erase Row #${rowIndex}?`)) return;
   try {
     const res = await fetch(`${CONFIG.SCRIPT_URL}?action=adminDelete&rowIndex=${rowIndex}`);
     const resData = await res.json();
-    if (resData.success) {
-      if (fromLeaderboard) fetchLeaderboardCrud(); else fetchAdminLogs();
-    } else {
-      alert("Error processing row deletion.");
-    }
-  } catch (err) {
-    alert("Purge request aborted due to network failure.");
-  }
+    if (resData.success) { if (fromLeaderboard) fetchLeaderboardCrud(); else fetchAdminLogs(); }
+    else alert("Error deleting row.");
+  } catch (err) { alert("Purge failed: network error."); }
 }
 
 function escapeHtml(s) {
@@ -989,51 +761,28 @@ function escapeHtml(s) {
 <!-- DEVELOPER CREDIT FOOTER -->
 <style>
 .dev-footer {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 7px 20px;
-  background: rgba(7,9,15,0.85);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid var(--border);
-  font-size: 0.72rem;
-  color: var(--text-dim);
-  letter-spacing: 0.4px;
-  font-family: 'Syne', sans-serif;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 7px 20px; background: rgba(7,9,15,0.85); backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border); font-size: 0.72rem; color: var(--text-dim);
+  letter-spacing: 0.4px; font-family: 'Syne', sans-serif;
 }
 .dev-footer span { opacity: 0.7; }
-.dev-footer a {
-  color: var(--text-dim);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  transition: color 0.2s;
-}
+.dev-footer a { color: var(--text-dim); text-decoration: none; display: inline-flex; align-items: center; transition: color 0.2s; }
 .dev-footer a:hover { color: var(--cyan); }
 .dev-footer .sep { opacity: 0.3; }
 </style>
-
 <footer class="dev-footer">
   <span>Developed by Md. Fuad Hasan</span>
   <span class="sep">·</span>
   <a href="https://github.com/fuaadhassaan" target="_blank" rel="noopener" title="GitHub">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.113.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-    </svg>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.113.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
   </a>
   <a href="https://www.facebook.com/fuaadXhassan" target="_blank" rel="noopener" title="Facebook">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-    </svg>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
   </a>
   <a href="https://www.instagram.com/fuaad._.hassan" target="_blank" rel="noopener" title="Instagram">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
-    </svg>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
   </a>
 </footer>
 </body>
